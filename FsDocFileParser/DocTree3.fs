@@ -88,6 +88,34 @@ let (|SingleLineTitle|_|) treeList3 =
             if title |> LooksLikeSingleLineTitle then Some(title,tail) else None
         | _ -> None
 
+let AsParagraphStringAndTail treeList3 =
+    let mutable result = ""
+    let mutable resultTail = treeList3
+    let rec recurse lst =
+        match lst with
+            | DT3Content(line)::tail ->
+                if result.Length = 0 then result <- line else result <- result + " " + line
+                resultTail <- tail
+                recurse tail
+            | _ ->
+                ()
+    recurse treeList3
+    match resultTail with
+        | DT3EmptyLine::tail ->
+            resultTail <- tail
+        | _ ->
+            ()
+    result, resultTail
+
+let (|MultiLineParagraph|_|) treeList3 =
+    match treeList3 with
+        | DT3Content _::_ -> Some(treeList3 |> AsParagraphStringAndTail)
+        | _ -> None
+
+
+
+
+
 
 let rec DocTree3ToHtmlRec nestLevel treeList3 =
 
@@ -112,6 +140,12 @@ let rec DocTree3ToHtmlRec nestLevel treeList3 =
             printfn "<H3>%s</H3>" (title |> EscapedForHtml)
             translated tail
 
+        // [ ] recogniser here
+
+        | MultiLineParagraph (paragraph,tail), 0 ->
+            printfn "<p>%s</p>" (paragraph |> EscapedForHtml)
+            translated tail
+
         //
         // Basic fallbacks:
         //
@@ -132,7 +166,7 @@ let rec DocTree3ToHtmlRec nestLevel treeList3 =
 
         | DT3Bullet(lst)::tail, _ ->
             printfn "<li>"
-            nested lst
+            translated lst  // not nested, so top-level presentation rules still apply within the bullet point!
             printfn "</li>"
             translated tail
 
