@@ -1,0 +1,755 @@
+CSS Blog
+========
+
+For software developers who know some stuff, but really didn't update 
+their CSS knowledge recently.  Oh, with a slant that you'll be making APPS.
+
+Other people might find this interesting anyway.
+
+
+
+Background
+==========
+
+- HTML is all about saying WHAT stuff should be on the screen,
+  and what stuff 'goes inside' other stuff.
+  
+- CSS is about APPEARANCE and POSITIONING of all that stuff.
+
+In olden times...
+
+HTML said a lot about WHAT stuff should be on the screen, but
+also implied a lot about APPEARENCE and POSITIONING of that stuff too!
+
+This still shows up today in the DEFAULT CHARACTERISTICS of some
+HTML tags:
+
+	[This HTML code with three spans]
+	[Shows like this in a row]
+	
+	[This HTML code with spans changed to divs]
+	[Shows like this is a column]
+
+Today...
+
+Now that CSS 100% rules, I can make div and span do DIFFERENT THINGS:
+  
+    TODO: show span and div behaving opposite to traditional defaults with CSS.
+
+	[This HTML code with three spans as display:block]
+	[Shows like this in a column]
+	Woo it arranges like <div> used to!
+	
+	[This HTML code with divs changed to spans as display:inline-block]
+	[Shows like this is a row]
+	Woo it arranges like <span> used to!
+
+  CSS can take over.  It sets the meaning of the tags!
+
+If you're a software developer and didn't know this, then this blog is 
+particularly for you!
+
+
+
+
+WHERE TO PUT YOUR CSS
+=====================
+
+Firstly, CSS language consists of PROPERTIES that look this this:
+
+	background-colour: red;
+	width: 100%;
+
+Secondly, you can put your CSS in THREE PLACES:
+
+	- MIXED into your HTML in a style='...' attribute
+	- SEPARATELY at the top of your HTML, in a <style>...</style> tag
+	- SEPARATELY in another file, with extension ".css"
+
+MIXED into your HTML
+  
+    [Code for red paragraph]
+	[Pic of red paragraph]
+	
+SEPARATELY at the top of your HTML
+
+	[Code for red paragraph in separate <style> with p {}.]
+	[Pic of red paragraph]
+
+SEPARATELY in another file
+
+	[Code for red paragraph in separate file]
+	[Code for HTML file including that file]
+	[Pic of red paragraph]
+
+If you put CSS separately, it becomes UNLINKED from the HTML!
+
+To tie it back together you need to know about CSS SELECTORS,
+which are the bits I highlighted, and I introduce later.
+
+We can do a load of introduction stuff without that just yet.
+
+Why separate CSS?
+
+	Engineering principles of SEPARATION OF CONCERNS appear in loads
+	of places, also in CSS.
+	
+	In the past, people wanted to have Newspaper
+	web sites, where all the fonts and heading styles could look the same
+	throughout.  Placing your CSS in a separate file can facilitate this.
+	
+	You can then switch CSS files to easily experiment with changing the 
+	entire site look, and not touch ANY HTML!   (In theory).
+
+
+
+
+
+
+CSS Appearance
+==============
+
+Because the same stuff over and over is boring...
+
+The easiest bit of CSS is setting the APPEARANCE of stuff.
+
+	- colour
+	- background colours
+	- fonts
+
+	[Show some RESULT IMAGES and style=]
+
+
+
+
+ASIDE:  CSS RESET
+=================
+
+Because the browser screen isn't really yours to start with...
+
+When you get going, you'll notice a small border around the screen.
+
+	[Show the border]
+
+A "CSS RESET" neutralises this, and other browser-specific defaults.
+
+	[Show it gone]
+
+The whole screen is then all yours!
+
+	[Link to a CSS reset script]
+
+
+
+
+
+
+
+
+CSS SELECTORS
+=============
+
+When your CSS is SEPARATE to the HTML you need to tie them together.
+
+CSS SELECTORS *are* the ties.
+
+To be honest, CSS SELECTORS aren't pretty overall, because there's 
+loads of ways of doing it... choices, choices!
+
+Since you're an impatient software developer, you'll already be looking
+at other people's CSS, and you'll realise it's HUMUNGOUS.  Mostly
+this is because of a thing called CSS SELECTOR SPECIFITY.
+
+CSS SELECTOR SPECIFITY is all about mostly using some CSS, but sometimes, 
+using OTHER CSS instead.  This is one reason why other people's CSS looks 
+incomprehensible at a glance.  But don't worry - yours can look incomprehensible 
+too.
+
+CSS SELECTOR BASICS
+
+Software Developers like to be VERY SPECIFIC about WHY their programs work.
+
+Some of the CSS SELECTORS feel like they were designed for Copy Writers and 
+Graphic Artists and the like doing fancy 'advert'-like pages.  They have 
+particular needs that might not match yours.
+
+Consequently, some of the CSS SELECTOR techniques have a very "general, this 
+applies everywhere" feel about them, that might feel a bit DANGEROUS to a 
+software guy, particularly as your eventual HTML page is likely to consist of 
+lots of nested parts, possibly done by a framework of some sort.
+
+YOU must make your choices, and do what feels right!
+
+CSS tie by class
+
+Probably the most robust software-developery way of tying separately-specified CSS 
+styles to tags is when you realise you can assign CLASS names to HTML TAGS:
+You make up the class names.
+
+	<div class="budgie">JARVIS</div>
+	<div class="budgie">VINNY</div>
+
+Now define the STYLE OF THAT CLASS and notice the DOT which means "class name follows":
+
+	.budgie {
+		width:  10em;
+		height: 5em;
+	}
+
+Example:
+
+	<style>
+
+	.budgie {
+		font-size: 30pt;
+	}
+
+	</style>
+
+	<div>This is just ordinary text.</div>
+	<div class="budgie">JARVIS</div>
+	<div class="budgie">VINNY</div>
+
+CSS Class MIX-INS
+
+The class= list is, in fact, a SPACE SEPARATED LIST OF NAMES that you just made 
+up off the top of your head.
+
+So, you can associate MANY CLASS NAMES and MIX IN off the top of your head:
+
+	<div class="budgie white-face sky-blue">VINNY</div>
+	<div class="budgie yellow-face dark-green">JARVIS</div>
+
+Example:
+
+	<style>
+
+	.budgie {
+		display: flex;
+		align-items: center;
+		justify-content: center;		
+		width: 10em;
+		height: 5em;
+		font-size: 30pt;
+	}
+
+	.white-face {
+		color: white;
+	}
+	
+	.yellow-face {
+		color: yellow;
+	}
+	
+	.sky-blue {
+		background-color: #5AA9C2;
+	}
+	
+	.dark-green {
+		background-color: #025B12;
+	}
+
+	</style>
+
+	<div class="budgie white-face sky-blue">VINNY</div>
+	<div class="budgie yellow-face dark-green">JARVIS</div>
+	
+Try erasing the class names from the class="..." parts of the divs.	
+
+CSS tie by HTML TAG
+
+HTML has things like <div>, <p> and <span> tags.  You can project a style onto
+these, but it's PROBABLY NOT THE RIGHT THING TO DO because they are just SO COMMON.
+
+Anyway, this is how to apply a style to a <div> NOTICE NO LEADING DOT THIS TIME:
+
+	div {
+		background-color: cyan;
+	}
+
+Example:
+
+	<style>
+	
+	div {
+		background-color: cyan;
+	}
+	
+	p {
+		background-color: yellow;
+	}
+
+	span {
+		color: red;
+		font-weight: 900;
+	}
+	
+	</style>
+	
+	<div>This is what a DIV looks like now.</div>
+	<span>This is what a SPAN looks like now.</span>
+	<p>This is what a P paragraph looks like now.</p>
+	<div>This is another DIV <span>that has a SPAN inside</span> of it in the middle.</div>
+
+CSS tie by USER DEFINED TAG NAMES
+
+There seems to be some room to have user-defined tag names these days.
+And you can apply styles to them. Frameworks like Angular use these.
+Notice there is NO LEADING DOT in the CSS!
+
+Example:
+
+	<style>
+	
+	charlie {
+		background-color: #5AA9C2;
+	}
+	
+	oscar {
+		background-color: #029B12;
+	}
+
+	</style>
+	
+	<charlie>This is what a &lt;charlie&gt; tag looks like.</charlie>
+	<oscar>This is what an &lt;oscar&gt; tag looks like.</oscar>
+
+
+
+
+CSS Sizing And Positioning
+==========================
+
+It's difficult to separate SIZE and POSITIONING when constructing CSS
+examples, so I will show these together.
+
+The CSS "display:", "width:" and "height:" properties combine together
+to control loads of aspects of size and position.
+
+Two broad themes when positioning things in the browser are:
+
+	- Some things flow like PARAGRAPHs
+	- Some things are CONTAINER BOXES which position their child items
+
+Three themes when SIZING things in the browser are:
+
+	- "ATOMIC" things are a fixed size (dammit!)
+	- Some things have no direct size, they tight-fit around their content,
+	  so it's the content that's setting the size.
+	- Some things want to STRETCH to FILL OUT SPACE
+
+Anything that wants to STRETCH to fill out space CANNOT JUST DO THAT.
+It must have a PARENT container that is telling it the available space!
+
+MAKE A SYMBOL-THING THAT FLOWS WITH PARAGRAPH TEXT
+
+It's pretty obvious what text does - it atomatically wraps.  But you can 
+make a "thing" that sits in a paragraph flow, and wraps like text, using
+"display:inline-block" and setting a width and height.  
+
+An "em" is a unit of measure related to the size of the currently selected 
+font, which is a conceptual square in which the graphic designer fitted the 
+letters:
+
+Example:
+
+	<style>
+	redbox {
+		display: inline-block;
+		background-color: red;
+		width: 1.5em;
+		height: 1.5em;
+	}
+	</style>
+
+	Some Text with a red box: <redbox></redbox>, and some more text.
+
+Example:
+
+	<style>
+	redbox {
+		display: inline-block;
+		background-color: red;
+		width: 1.5em;
+		height: 1.5em;
+	}
+	bluebox {
+		display: inline-block;
+		background-color: blue;
+		width: 2.0em;
+		height: 2.0em;
+	}
+	</style>
+
+	Some text with boxes: <redbox></redbox><bluebox></bluebox><redbox></redbox><bluebox></bluebox><redbox></redbox>, and some more text.
+
+MAKE A HIGHLIGHTER PEN
+
+This is sort of what <span> did in the older browser.
+Very similar to the previous example, you can also use "display:inline" 
+to make a highlighter pen.  Crucially, WITHOUT stating a width and height:
+
+Example:
+
+	<style>
+	highlight {
+		display: inline;
+		background-color: yellow;
+	}
+	</style>
+
+	With the next revision of this document, we really need to sort <highlight>this 
+	thing</highlight> and <highlight>this other thing</highlight> out, before we
+	release it!
+
+INLINE vs INLINE-BLOCK
+
+Well, basically, any child-stuff inside display:inline-block can't be split
+as part of the wrapping done by the hosting paragraph.
+
+With display:inline, the child-stuff CAN be considered for splitting by 
+the hosting paragraph as it wraps.
+
+Use the "MAKE A HIGHLIGHTER PEN" example above, to see this yourself.
+
+MAKE SOMETHING THAT FORCE-STARTS A NEW PARAGRAPH
+
+This is sort of like what the <div> and <p> tags do in the older browser.
+Use "display:block" to do this.
+
+Example:
+
+	<style>
+	next {
+		display: block;
+		background-color: cyan;
+	}
+	</style>
+
+	Well, this paragraph looks <next>misleading</next> because it looks like
+	it will be all one thing, but my user-defined 'next' tag spoils everything
+	because it starts a new paragraph for its content, and then afterwards this
+	remaining text behaves like a new paragraph.
+
+Notice also how the "display:block" thing occupied ALL of the horizontal space,
+which is why I set a background colour.
+
+MAKE A CONTAINER THAT ARRANGES CHILD ITEMS
+
+This is all about "display:flex", which should go on the container.
+
+This can do:
+
+	- Arrangement in a row
+	- Arrangement in a column
+	- Arrangement like icons in Windows Explorer
+
+For this, I do need to have a container to contain the things that are
+being arranged.  I'll apply a fixed size to that, for illustration, but it could
+easily fill the whole page.
+
+Example:
+
+	<style>
+	outerthing {
+		display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+		flex-wrap: nowrap;
+		width: 10em;
+		height: 10em;
+		background-color: #EEEEEE;
+	}
+	
+	blue {
+		display: inline;
+		width:2em;
+		height:2em;
+		background-color: blue;
+	}
+	
+	red {
+		display: block;
+		width:2em;
+		height:2em;
+		background-color: red;
+	}
+
+	green {
+		display: inline-block;
+		width:2em;
+		height:2em;
+		background-color: #025B12;
+	}
+	</style>
+	
+	<outerthing><blue></blue><red></red><green></green></outerthing>
+
+Notice that the outer container sets the positions of the child items
+irrespective of the "display:" property of the child item.
+
+The child items CAN be of differing sizes.
+
+- Try changing the flex-direction to "column".
+- Try changing the align-items between "flex-start", "center", and "flex-end".
+- Try changing the justify-content between "flex-start", "center", and "flex-end".
+- Try changing the flex-wrap between "nowrap" and "wrap" while inserting 
+  LOADS MORE red blue and green child items.
+  
+There are many properties associated with "display:flex" that support arrangement
+of items, so be sure to check out this resource:
+
+	- https://css-tricks.com/snippets/css/a-guide-to-flexbox/
+
+SPLIT UP THE SCREEN LIKE A DESKTOP APP
+
+This is the "display:grid" facility.
+
+This can split up the whole screen into title bars, status bars, side panels, etc.
+You can also split up parts of the screen.
+
+With "display:grid" you make up some names for the various major areas of the
+display, and do a kind of "ASCII ART" representation of the layout.
+
+The following grid has TWO columns, and FOUR rows.
+
+The first column is fixed width (8em), and the second fills the remaining space (auto):
+
+        grid-template-columns: 8em auto;
+
+The first row is fixed height (2em) as is the second and fourth.
+The third row fills the remaining height (auto):
+
+        grid-template-rows: 2em 2em auto 2em;
+
+The grid-template-areas property contains invented cell names. This then indicates 
+how to build cells that can SPAN COLUMNS or rows:
+
+		grid-template-areas: 
+			"title title"
+			"menu menu"
+			"side doc"
+			"status status";		
+
+Finally, I've invented a load of custom tag names, like <titlebar>, which are
+associated with their desired grid-template-areas cell:
+
+		grid-area: title;
+
+Example:
+
+	<style>
+	
+	outerthing {
+		display: grid;
+		width: 50em;
+		height: 20em;
+		background-color: #EEEEEE;
+        grid-template-columns: 8em auto;
+        grid-template-rows: 2em 2em auto 2em;
+		grid-template-areas: 
+			"title title"
+			"menu menu"
+			"side doc"
+			"status status";		
+	}
+	
+	titlebar {
+		grid-area: title;
+		background-color: #5AA9C2;
+	}
+
+	menubar {
+		grid-area: menu;
+		background-color: #DDDDDD;
+	}
+	
+	statusbar {
+		grid-area: status;
+		background-color: #DDDDDD;
+	}
+
+	sidepanel {
+		grid-area: side;
+		background-color: #999999;
+	}
+
+	documentarea {
+		grid-area: doc;
+		background-color: #FFFFFF;
+	}
+	
+	</style>
+	
+	<outerthing>
+		<titlebar>TITLE BAR</titlebar>
+		<menubar>MENU BAR</menubar>
+		<sidepanel>SIDE PANEL</sidepanel>
+		<documentarea>DOCUMENT AREA</documentarea>
+		<statusbar>STATUS BAR</statusbar>
+	</outerthing>
+
+TO HIDE THE SIDE PANEL
+
+Could be done in a variety of ways, but:
+
+Set the following:
+
+		grid-template-areas: 
+			"title title"
+			"menu menu"
+			"doc doc"
+			"status status";		
+
+Hide the side panel tag:
+
+		sidepanel {
+			display: none;
+			... etc
+
+GRID EXTERNAL REFERENCE
+
+See this reference for all about CSS Grids:
+
+	https://css-tricks.com/snippets/css/complete-guide-grid/
+
+
+
+
+
+
+
+
+
+
+CSS Overflow - Content Clipping, Content Scrolling
+==================================================
+
+This is the "overflow" property.
+
+It's easy to end up with "container" behaviour with HTML and CSS.
+However, you need to control what happens with content that is 
+larger than the container.
+
+The options are:
+
+	- Allow it to visually overflow the area of the container
+	- Clip it to the container
+	- Show a scrollbar
+	- Show a scrollbar ONLY IF it needs it.
+	
+Both of these can be considered in the HORIZONTAL and VERTICAL
+directions separately.
+
+OVERFLOW EXAMPLE
+
+Here a container of 10 x 10 is used to contain two blocks of size 7 x 7 each.
+
+Example:
+
+	<style>
+	
+	container {
+    	display: block;
+		width: 10em;
+		height: 10em;
+		background-color: #EEEEEE;
+		overflow: none;
+	}
+	
+	inner1 {
+    	display: block;
+		background-color: #5AA9C2;
+        width: 7em;
+        height: 7em;
+	}
+
+	inner2 {
+    	display: block;
+		background-color: #BBBBBB;
+        width: 7em;
+        height: 7em;
+	}
+	
+	</style>
+	
+	<container>
+		<inner1></inner1>
+		<inner2></inner2>
+	</container>
+
+The second item descends outside of the container:
+
+	[Image of second item descending out of container]
+
+You can clip the content using:
+
+	overflow: hidden;
+	
+	[Image with overflow hidden]
+
+You can add permanent scroll bars using:
+
+	overflow: scroll;
+	
+	[Image with both scroll bars]
+	
+You can add a permanent VERTICAL scroll bar and clip any horizontal overlap using:
+
+	overflow-x: hidden;
+	overflow-y: scroll;
+
+	[Image with vertical scroll bar only]
+
+You can automatically add a VERTICAL scroll bar using:
+
+	overflow-x: hidden;
+	overflow-y: auto;
+
+You can automatically add BOTH scroll bars using:
+
+	overflow: auto;
+	
+	... which is short for:
+	
+	overflow-x: auto;
+	overflow-y: auto;
+	
+
+
+
+
+CSS Box Model for APPEARANCE
+============================
+
+Every visual element in the browser fits in a conceptual rectangle
+around which you can add extra spacing and a border, if desired.
+
+This is used to do frames, panels, buttons etc...
+
+The CSS box model allows you to:
+
+	- Include spacing around content (padding)
+	- Include a border
+	- Include spacing around the border and adjacent items
+	
+
+
+	
+	
+	
+CSS Units of measure
+====================
+
+Various units of measure exist, but most notably:
+
+	- Pixels that aren't really pixels
+	- A measure known as "em" that's based on the FONT size
+	- Percentage of the size of the container item
+
+
+
+
+
+
