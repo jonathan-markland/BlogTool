@@ -43,11 +43,55 @@ let EscapedForHtml s = s
 
 
 
+let IsStringAll chr str =
+    let mutable is = true
+    for ch in str do is <- is && (ch=chr) 
+    is
+
+
+
+let IsHeading1Underline = IsStringAll '='
+let IsHeading2Underline = IsStringAll '-'
+
+
+
+let TitleWithUnderline pred treeList3 =
+    match treeList3 with
+        | DT3Content(title)::DT3Content(underline)::DT3EmptyLine::tail ->
+            if pred underline then Some(title,tail) else None
+        | DT3Content(title)::DT3Content(underline)::tail ->
+            if pred underline then Some(title,tail) else None
+        | _ -> None
+
+    
+
+
+let (|Title1WithUnderline|_|) = TitleWithUnderline IsHeading1Underline
+let (|Title2WithUnderline|_|) = TitleWithUnderline IsHeading2Underline
+
+
+
 let rec DocTree3ToHtml treeList3 =
 
     let translated = DocTree3ToHtml
 
     match treeList3 with
+
+        //
+        // Priority patterns:
+        //
+
+        | Title1WithUnderline (title,tail) ->
+            printfn "<H1>%s</H1>" (title |> EscapedForHtml)
+            translated tail
+
+        | Title2WithUnderline (title,tail) ->
+            printfn "<H2>%s</H2>" (title |> EscapedForHtml)
+            translated tail
+
+        //
+        // Basic fallbacks:
+        //
 
         | DT3EmptyLine::tail ->
             printfn "<br/>"

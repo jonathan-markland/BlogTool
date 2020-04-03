@@ -9,7 +9,7 @@ Other people might find this interesting anyway.
 
 
 Background
-==========
+----------
 
 - HTML is all about saying WHAT stuff should be on the screen,
   and what stuff 'goes inside' other stuff.
