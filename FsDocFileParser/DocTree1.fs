@@ -39,9 +39,6 @@
 // without it including too many functions.
 
 
-// [ ] TODO: WHen indented, we could do a lookahead for trailing blanks before an 'unindent', and return these to be included at the level of that unindent.
-
-
 
 /// Document item representation, line-based, but 
 /// using nesting for indentation.  Note that the document is
@@ -57,6 +54,13 @@ type DocTree1 =
 
     /// An indented section, represented by nesting.
     | DT1Indent of DocTree1 list
+
+
+
+let IsDT1EmptyRow row =
+    match row with 
+        | DT1EmptyLine -> true
+        | _ -> false
 
 
 
@@ -111,6 +115,13 @@ let DocumentToDocTree1 (document:string[]) =
 
             else
                 // Row is at DECREASED indent than our context -- return back to caller, let it handle it.
+                // ... but first, reverse back over any empty rows:
+                let trailingEmptyRowCount = 
+                    treeList 
+                        |> List.tryFindIndex (fun x -> not (x |> IsDT1EmptyRow)) 
+                        |> Option.defaultValue 0
+                let treeList = treeList |> List.skip trailingEmptyRowCount
+                let rowIndex = rowIndex - trailingEmptyRowCount
                 treeList, rowIndex
 
         else
