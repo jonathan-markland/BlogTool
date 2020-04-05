@@ -2,6 +2,44 @@
 
 open DocTree1
 
+// DocTree2
+// --------
+// Why this stage?
+//
+// DocTree2 adds the following innovations:
+//
+//     - Bullets
+//     - Preformatted sections  (i.e.: code)
+//     - Reduces multiple blank lines to a page break
+//
+// DocTree2 represents the above in a way that simplifies
+// later processing stages by being more explicit, and thereby
+// avoiding the potential for misinterpretation accidents.
+//
+// Bullets
+// -------
+// In the DT1Tree, bullets are represented by two list items,
+// A DT1Content that starts with "- ", followed by a DT1Indent,
+// which this section reduces to a DT2Bullet.  Alternatively,
+// a DT1Content starting with "- " that has no indent is seen
+// as a single-line indent, and also transformed to DT2Bullet.
+//
+// Preformatted sections
+// ---------------------
+// A line of text that ends with ':' is said to be an "interoducer"
+// and if there is DT1Indent following, or DT1EmptyLine-DT1Indent,
+// then the DT1Indent is transformed into a DT2Preformatted.  This
+// indicates to later sections that the content should be treated
+// more literally, as code, for instance.  Empty lines between
+// lines of preformatted text are preserved.
+//
+// Page Breaks
+// -----------
+// A run of two or more DT1EmptyLines is replaced by a DT2PageBreak.
+// This does NOT apply within a preformatted section.
+
+
+// [ ] We don't have DT2Preformatted yet
 
 
 /// Document item representation, line-based, with additional

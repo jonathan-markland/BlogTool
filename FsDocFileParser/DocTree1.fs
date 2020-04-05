@@ -1,5 +1,47 @@
 ﻿module DocTree1
 
+// DocTree1
+// --------
+// Why this stage?
+//
+// This processing pass scans the raw text file, a line at a time,
+// building a DT1Tree.
+//
+// Its primary purpose is to remove whitespace indentation from the equation.
+//
+// The first purpose is to introduce a uniform representation for 
+// EMPTY lines.  An empty line is the empty-string, or a line that has
+// tabs and spaces and NOTHING else.  For such lines, we declare
+// the spaces and tabs to be untrustworthy, and are therefore
+// insignificant regarding determining the indentation.  For 
+// reliability, only VISIBLE text content plays a part in determining 
+// indentation structure.
+//
+// The second purpose is to strip left-side whitespace that is indentation.
+// DocTree1 will have content rows (DT1Content) that have
+// the left-side whitspace stripped, and thus will be raw text, and
+// the indentation will be represented recursively by DT1Indent nodes.
+//
+// A third purpose is the resolve a subtlety of blank line ownership
+// when a section "un-indents".  Any blank lines between the indented
+// text and the unindented text should be siblings at the unindented level. 
+//
+//              Child end line
+//                                                   | (a)
+//                                                   | (b)
+//        Parent level is here...
+//
+// So, blank lines (a) and (b) above should be siblings of the "Parent
+// level", and NOT siblings after "Child end line".
+//
+// It is also intended that this will be relative project-agnostic,
+// and could be re-used in future similar text processing projects
+// without it including too many functions.
+
+
+// [ ] TODO: WHen indented, we could do a lookahead for trailing blanks before an 'unindent', and return these to be included at the level of that unindent.
+
+
 
 /// Document item representation, line-based, but 
 /// using nesting for indentation.  Note that the document is
