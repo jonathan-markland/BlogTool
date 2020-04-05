@@ -128,14 +128,18 @@ let ShowDocTreeList treeList =
         match item with
 
             | DT1EmptyLine -> 
-                printfn "%s" indentString
+                printfn "DT1EmptyLine:%s" indentString
 
             | DT1Content(s) -> 
-                printfn "%s" (indentString + s)
+                printfn "DT1Content  :%s" (indentString + s)
 
             | DT1Indent(indented) ->
+                let newIndent = indentString + "    "
+                printfn "-> DT1Indent:%sv" newIndent
                 indented |> List.iter (
-                    ShowDocTreeItem (indentString + "    "))
+                    ShowDocTreeItem newIndent)
+                printfn "<-"
 
-    treeList |> List.iter (ShowDocTreeItem "// ")
+    treeList |> List.iter (ShowDocTreeItem "")
+
 

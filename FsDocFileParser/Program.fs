@@ -61,14 +61,14 @@ let main argv =
         System.IO.File.ReadAllLines(@"C:\Users\ukjmak\source\repos\FsDocFileParser\CSS.txt")
 
     let treeList = document |> DocumentToDocTree1
-    //treeList |> ShowDocTreeList
+    treeList |> ShowDocTreeList
 
-    let tree2 = treeList |> DocTree1ToDocTree2
-    //tree2 |> ShowDocTree2List
+    //let tree2 = treeList |> DocTree1ToDocTree2
+    ////tree2 |> ShowDocTree2List
 
-    let tree3 = tree2 |> DocTree2ToDocTree3 CodeIntroducers
+    //let tree3 = tree2 |> DocTree2ToDocTree3 CodeIntroducers
     
-    tree3 |> ShowDocTree3List
+    //tree3 |> ShowDocTree3List
 
     // tree3 |> DocTree3ToHtml
 
