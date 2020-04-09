@@ -80,55 +80,62 @@ let private LeftSideIndentation (str:string) =
 
 let DocumentToDocTree1 (document:string[]) =
 
-    let rowIsAtIncreasedIndent (this:string) (context:string) =
+    let atIncreasedIndentation (this:string) (context:string) =
         this.Length > context.Length
 
-    let rowIsAtSameLevelAsContext (this:string) (context:string) =
+    let stillAtSameLevelOfIndentation (this:string) (context:string) =
         this.Length = context.Length
 
-    let rowIsEmpty row =
+    let isEmpty row =
         row = (row |> LeftSideIndentation)
 
     let totalRowCount = document.Length
 
-    let rec ScanRec (document:string[]) rowIndex contextWhitespace treeList =
+    let backtractedOverEmptyRows treeList rowIndex =
+        let trailingEmptyRowCount = 
+            treeList 
+                |> List.tryFindIndex (fun x -> not (x |> IsDT1EmptyRow)) 
+                |> Option.defaultValue 0
+        let backtrackedTreeList = treeList |> List.skip trailingEmptyRowCount
+        let backtrackedRowIndex = rowIndex - trailingEmptyRowCount
+        backtrackedTreeList, backtrackedRowIndex
+
+    let rec translatedDocument (document:string[]) rowIndex contextWhitespace treeList =
 
         if rowIndex < totalRowCount then
             
             let thisRow = document.[rowIndex]
             let thisIndent = thisRow |> LeftSideIndentation
 
-            if rowIsEmpty thisRow then
-                let newTree = DT1EmptyLine::treeList
-                ScanRec document (rowIndex+1) contextWhitespace newTree
+            if thisRow |> isEmpty then
 
-            else if rowIsAtSameLevelAsContext thisIndent contextWhitespace then
+                let newTree = DT1EmptyLine::treeList
+                translatedDocument document (rowIndex+1) contextWhitespace newTree
+
+            else if stillAtSameLevelOfIndentation thisIndent contextWhitespace then
+
                 let rowTail = thisRow.Substring(thisIndent.Length, thisRow.Length - thisIndent.Length)
                 let newTree = DT1Content(rowTail)::treeList
-                ScanRec document (rowIndex+1) contextWhitespace newTree
+                translatedDocument document (rowIndex+1) contextWhitespace newTree
 
-            else if rowIsAtIncreasedIndent thisIndent contextWhitespace then
+            else if atIncreasedIndentation thisIndent contextWhitespace then
+
                 let childTreeList, indexAfterChildren =
-                    ScanRec document rowIndex thisIndent []  // let recursion case deal with it at the new contextual whitespace level
+                    translatedDocument document rowIndex thisIndent []  // let recursion case deal with it at the new contextual whitespace level
                 let newTree = DT1Indent(childTreeList |> List.rev)::treeList
-                ScanRec document indexAfterChildren contextWhitespace newTree
+                translatedDocument document indexAfterChildren contextWhitespace newTree
 
-            else
-                // Row is at DECREASED indent than our context -- return back to caller, let it handle it.
-                // ... but first, reverse back over any empty rows:
-                let trailingEmptyRowCount = 
-                    treeList 
-                        |> List.tryFindIndex (fun x -> not (x |> IsDT1EmptyRow)) 
-                        |> Option.defaultValue 0
-                let treeList = treeList |> List.skip trailingEmptyRowCount
-                let rowIndex = rowIndex - trailingEmptyRowCount
-                treeList, rowIndex
+            else // This row is at DECREASED indentation
+
+                (treeList, rowIndex) ||> backtractedOverEmptyRows
 
         else
             // No further rows.
             treeList, rowIndex
 
-    ScanRec document 0 "" [] |> fst |> List.rev
+    translatedDocument document 0 "" []
+        |> fst 
+        |> List.rev
 
 
 

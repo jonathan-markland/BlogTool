@@ -753,3 +753,59 @@ Various units of measure exist, but most notably:
 
 
 
+
+CSS Component nesting and sizing
+================================
+
+This section looks at setting dimensions of components.
+
+One DIV spoils the party
+------------------------
+
+The expectation is that the box is magenta.  But it's blue.
+
+Example:
+
+	<div style="width:500px; height:500px; background-color:#DDDDDD;">
+
+		<div style="width:50px; height:50px; background-color:blue;">
+		
+			<div>
+			
+				<div style="width:100%; height:100%; background-color:magenta;">
+				</div>
+				
+			</div>
+		
+		</div>
+
+	</div>
+
+The problem is caused because the width:100% takes looks at the 
+immediate parent, NOT the ancestry!  In this case the immediate parent
+states no width or height.
+
+Fixed:
+
+The problematic empty <div> now "transmits" size information to 
+its child items.  The box now appears magenta, as expected:
+
+	<div style="width:500px; height:500px; background-color:#DDDDDD;">
+
+		<div style="width:50px; height:50px; background-color:blue;">
+		
+			<div style="width:100%; height:100%;">
+			
+				<div style="width:100%; height:100%; background-color:magenta;">
+				</div>
+				
+			</div>
+		
+		</div>
+
+	</div>
+
+
+
+
+
