@@ -100,6 +100,15 @@ let DocumentToDocTree1 (document:string[]) =
         let backtrackedRowIndex = rowIndex - trailingEmptyRowCount
         backtrackedTreeList, backtrackedRowIndex
 
+    let rec includingTrailingEmptyRows (document:string[]) (treeList, rowIndex) =
+        if rowIndex < totalRowCount then
+            if document.[rowIndex] |> isEmpty then
+                includingTrailingEmptyRows document (DT1EmptyLine::treeList, rowIndex + 1)
+            else
+                (treeList, rowIndex)
+        else
+            (treeList, rowIndex)
+
     let rec translatedDocument (document:string[]) rowIndex contextWhitespace treeList =
 
         if rowIndex < totalRowCount then
@@ -131,9 +140,10 @@ let DocumentToDocTree1 (document:string[]) =
 
         else
             // No further rows.
-            treeList, rowIndex
+            (treeList, rowIndex) ||> backtractedOverEmptyRows
 
     translatedDocument document 0 "" []
+        |> includingTrailingEmptyRows document
         |> fst 
         |> List.rev
 
