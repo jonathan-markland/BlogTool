@@ -142,10 +142,10 @@ let ``Indented sections where empty lines appear at parent level`` () =
                     [ 
                         DT2Content "Indent 6"
                         DT2Content "Indent 7"
-                        //DT2EmptyLine
-                        DT2Indent ([ DT2Content "Second Indent 8" ; DT2Content "Second Indent 9" ])
                         DT2EmptyLine
+                        DT2Indent ([ DT2Content "Second Indent 8" ; DT2Content "Second Indent 9" ])
                     ])
+                DT2EmptyLine
                 
             ]
     
