@@ -126,6 +126,7 @@ let ``Indented sections where empty lines appear at parent level`` () =
         "    Indent 7"
         ""
         "        Second Indent 8"
+        "" // does not appear at parent level
         "        Second Indent 9"
         ""
     |]
@@ -143,7 +144,7 @@ let ``Indented sections where empty lines appear at parent level`` () =
                         DT2Content "Indent 6"
                         DT2Content "Indent 7"
                         DT2EmptyLine
-                        DT2Indent ([ DT2Content "Second Indent 8" ; DT2Content "Second Indent 9" ])
+                        DT2Indent ([ DT2Content "Second Indent 8" ; DT2EmptyLine ; DT2Content "Second Indent 9" ])
                     ])
                 DT2EmptyLine
                 
@@ -214,3 +215,110 @@ let ``Empty line kept after bullet`` () =
                 DT2Content "Other content"
             ]
 
+[<Fact>]
+let ``Bullets within bullets`` () = 
+    [|
+        "- Hello 1"
+        "  This is extra 1"
+        "- Hello 2"
+        "  This is extra 2"
+        "  - Hello 3"
+        "  - Hello 4"   // The bullet '-' characters must be in line with the text above, or else it's an additional indent.
+    |] 
+        |> Is 
+            [ 
+                DT2Bullet (
+                    [ 
+                        DT2Content "Hello 1"
+                        DT2Content "This is extra 1"
+                    ])
+                DT2Bullet (
+                    [ 
+                        DT2Content "Hello 2"
+                        DT2Content "This is extra 2" 
+                        DT2Bullet ([ DT2Content "Hello 3" ])
+                        DT2Bullet ([ DT2Content "Hello 4" ])
+                    ])
+            ]
+
+// ----------------------------------------------------------------------------------------------
+//  INDENTS and BULLET
+// ----------------------------------------------------------------------------------------------
+
+[<Fact>]
+let ``Indented bullets within bullets`` () = 
+    [|
+        "aaa"
+        "    bbb1"
+        "    bbb2"
+        "    - ccc"
+        "    - ddd"
+        "      eee"
+        "          fff"
+        "          fff"
+        "    - ggg"
+    |] 
+        |> Is 
+            [ 
+                DT2Content "aaa"
+                DT2Indent (
+                    [ 
+                        DT2Content "bbb1"
+                        DT2Content "bbb2"
+                        DT2Bullet([ DT2Content "ccc" ])
+                        DT2Bullet(
+                            [ 
+                                DT2Content "ddd"
+                                DT2Content "eee"
+                                DT2Indent(
+                                    [ 
+                                        DT2Content "fff"
+                                        DT2Content "fff"
+                                    ])
+                            ])
+                        DT2Bullet([ DT2Content "ggg" ])
+                    ])
+            ]
+
+[<Fact>]
+let ``Indented bullets within bullets with additional blank lines`` () = 
+    [|
+        "aaa"
+        ""
+        "    bbb1"
+        "    bbb2"
+        ""
+        "    - ccc"
+        ""
+        "    - ddd"
+        "      eee"
+        "          fff"
+        ""
+        "          fff"
+        "    - ggg"
+    |] 
+        |> Is 
+            [ 
+                DT2Content "aaa"
+                DT2EmptyLine
+                DT2Indent (
+                    [ 
+                        DT2Content "bbb1"
+                        DT2Content "bbb2"
+                        DT2EmptyLine
+                        DT2Bullet([ DT2Content "ccc" ])
+                        DT2EmptyLine
+                        DT2Bullet(
+                            [ 
+                                DT2Content "ddd"
+                                DT2Content "eee"
+                                DT2Indent(
+                                    [ 
+                                        DT2Content "fff"
+                                        DT2EmptyLine
+                                        DT2Content "fff"
+                                    ])
+                            ])
+                        DT2Bullet([ DT2Content "ggg" ])
+                    ])
+            ]
