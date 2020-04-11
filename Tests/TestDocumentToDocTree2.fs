@@ -322,3 +322,31 @@ let ``Indented bullets within bullets with additional blank lines`` () =
                         DT2Bullet([ DT2Content "ggg" ])
                     ])
             ]
+
+// ----------------------------------------------------------------------------------------------
+//  PAGE BREAKS
+// ----------------------------------------------------------------------------------------------
+
+[<Fact>]
+let ``Page break at main level`` () = 
+    [|
+        "Line 1"
+        ""
+        ""
+        "Line 2"
+    |]
+        |> Is [ DT2Content "Line 1" ; DT2PageBreak ; DT2Content "Line 2" ]
+
+[<Fact>]
+let ``Page break at indented level`` () = 
+
+    // Although this might be post filtered as an error in some applications.
+
+    [|
+        "Line 1"
+        "    Line 2"
+        ""
+        ""
+        "    Line 3"
+    |]
+        |> Is [ DT2Content "Line 1" ; DT2Indent ([ DT2Content "Line 2" ; DT2PageBreak ; DT2Content "Line 3" ]) ]
