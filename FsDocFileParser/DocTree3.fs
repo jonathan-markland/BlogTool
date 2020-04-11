@@ -1,8 +1,7 @@
 ﻿module DocTree3
 
 open DocTree2
-
-(*
+open StringClassifiers
 
 // DocTree3
 // --------
@@ -18,8 +17,127 @@ open DocTree2
 //
 // The above subsitutions do NOT apply within DT2Preformatted sections.
 
+type HeadingLevel = Heading1 | Heading2 | Heading3
+
+type DocTree3 =
+    | DT3Heading of HeadingLevel * string
+    | DT3Paragraph of string
+    | DT3Indent of DocTree3 list
+    | DT3Bullet of DocTree3 list
+    | DT3Preformatted of PreformattedString list
+    | DT3SubstitutionDirective of string
+    | DT3PageBreak
+
+// ----------------------------------------------------------------------------------------------
+//  Square Bracketed Line
+// ----------------------------------------------------------------------------------------------
+
+let (|SquareBracketedLine|_|) treeList2 =
+    match treeList2 with
+        | DT2Content(line)::tail ->
+            if line |> LooksLikeSquareBracketed then Some(line,tail) else None
+        | _ -> None
+
+// ----------------------------------------------------------------------------------------------
+//  Single line title
+// ----------------------------------------------------------------------------------------------
+
+let (|SingleLineTitle|_|) treeList3 =
+    match treeList3 with
+        | DT2Content(title)::DT2EmptyLine::tail ->
+            if title |> LooksLikeSingleLineTitle then Some(title,tail) else None
+        | _ -> None
+
+// ----------------------------------------------------------------------------------------------
+//  Underlined titles
+// ----------------------------------------------------------------------------------------------
+
+let TitleWithUnderline pred treeList2 =
+    match treeList2 with
+        | DT2Content(title)::DT2Content(underline)::DT2EmptyLine::tail ->
+            if pred underline then Some(title,tail) else None
+        | DT2Content(title)::DT2Content(underline)::tail ->
+            if pred underline then Some(title,tail) else None
+        | _ -> None
+
+let (|Title1WithUnderline|_|) = TitleWithUnderline IsHeading1Underline
+let (|Title2WithUnderline|_|) = TitleWithUnderline IsHeading2Underline
+
+// ----------------------------------------------------------------------------------------------
+//  Paragraph collection
+// ----------------------------------------------------------------------------------------------
+
+let AsParagraphStringAndTail treeList2 =
+    let mutable result = ""
+    let mutable resultTail = treeList2
+    let rec recurse lst =
+        match lst with
+            | DT2Content(line)::tail ->
+                if result.Length = 0 then result <- line else result <- result + " " + line
+                resultTail <- tail
+                recurse tail
+            | _ ->
+                ()
+    recurse treeList2
+    match resultTail with
+        | DT2EmptyLine::tail ->
+            resultTail <- tail
+        | _ ->
+            ()
+    result, resultTail
 
 
+let (|Paragraph|_|) treeList2 =
+    match treeList2 with
+        | DT2Content _::_ -> Some(treeList2 |> AsParagraphStringAndTail)
+        | _ -> None
+
+// ----------------------------------------------------------------------------------------------
+//  Translation
+// ----------------------------------------------------------------------------------------------
+
+let rec DocTree2ToDocTree3 treeList2 =
+
+    let translated = DocTree2ToDocTree3
+
+    match treeList2 with
+
+        //
+        // Upgraded interpretations:
+        //
+
+        | SquareBracketedLine (line,tail) -> 
+            let trimmedDirective = line.Trim()
+            DT3SubstitutionDirective(trimmedDirective)::(translated tail)
+
+        | Title1WithUnderline(title,tail) ->
+            DT3Heading(Heading1, title)::(translated tail)
+
+        | Title2WithUnderline(title,tail) ->
+            DT3Heading(Heading2, title)::(translated tail)
+
+        | SingleLineTitle(title,tail) ->
+            DT3Heading(Heading3, title)::(translated tail)
+
+        | Paragraph(content,tail) ->
+            DT3Paragraph(content)::(translated tail)
+
+        //
+        // Fallback cases (1:1 translation with DT2):
+        //
+        
+        | DT2EmptyLine::tail         ->  translated tail
+        | DT2Content(str)::tail      ->  DT3Paragraph(str)::(translated tail)
+        | DT2Indent(lst)::tail       ->  DT3Indent(translated lst)::(translated tail)
+        | DT2Preformatted(x)::tail   ->  DT3Preformatted(x)::(translated tail)
+        | DT2Bullet(lst)::tail       ->  DT3Bullet(translated lst)::(translated tail)
+        | DT2PageBreak::tail         ->  DT3PageBreak::(translated tail)
+        | [] -> []
+
+
+
+
+(*
 type CodeCategoryName = CodeCategoryName of string
 type PreformattedString = PreformattedString of string
 type HeadingLevel = Heading1 | Heading2 | Heading3
@@ -38,55 +156,15 @@ type DocTree3 =
 
 
 
-let LooksLikeSquareBracketed (str:string) =
-    let str = str.Trim()
-    str.Length > 1
-        && str.[0] = '['
-        && str.[str.Length-1] = ']'
-
-let IsStringAll chr str =
-    let mutable is = true
-    for ch in str do is <- is && (ch=chr) 
-    is
-
-let IsHeading1Underline = IsStringAll '='
-let IsHeading2Underline = IsStringAll '-'
-
-let IsPunctuation ch = (ch = '.') || (ch = '!') || (ch = '?') || (ch = ':')
-
-let LooksLikeSingleLineTitle (str:string) =
-    str.Length > 1
-        && str.[0] |> System.Char.IsLetterOrDigit
-        && not (str.[str.Length-1] |> IsPunctuation)
 
 
 
 
 
-let (|SquareBracketedLine|_|) treeList2 =
-    match treeList2 with
-        | DT2Content(line)::tail ->
-            if line |> LooksLikeSquareBracketed then Some(line,tail) else None
-        | _ -> None
 
 
 
-let TitleWithUnderline pred treeList2 =
-    match treeList2 with
-        | DT2Content(title)::DT2Content(underline)::DT2EmptyLine::tail ->
-            if pred underline then Some(title,tail) else None
-        | DT2Content(title)::DT2Content(underline)::tail ->
-            if pred underline then Some(title,tail) else None
-        | _ -> None
 
-let (|Title1WithUnderline|_|) = TitleWithUnderline IsHeading1Underline
-let (|Title2WithUnderline|_|) = TitleWithUnderline IsHeading2Underline
-
-let (|SingleLineTitle|_|) treeList3 =
-    match treeList3 with
-        | DT2Content(title)::DT2EmptyLine::tail ->
-            if title |> LooksLikeSingleLineTitle then Some(title,tail) else None
-        | _ -> None
 
 
 

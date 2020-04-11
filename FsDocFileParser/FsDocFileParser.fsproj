@@ -6,9 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="StringClassifiers.fs" />
     <Compile Include="DocTree1.fs" />
     <Compile Include="DocTree2.fs" />
     <Compile Include="DocTree3.fs" />
+    <Compile Include="Debug.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

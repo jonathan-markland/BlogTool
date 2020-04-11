@@ -438,7 +438,7 @@ MAKE A CONTAINER THAT ARRANGES CHILD ITEMS
 
 This is all about "display:flex", which should go on the container.
 
-This can do:
+This can do:-
 
 	- Arrangement in a row
 	- Arrangement in a column
@@ -592,7 +592,7 @@ Example:
 
 TO HIDE THE SIDE PANEL
 
-Could be done in a variety of ways, but:
+Could be done in a variety of ways, as follows.
 
 Set the following:
 
@@ -679,7 +679,7 @@ Example:
 		<inner2></inner2>
 	</container>
 
-The second item descends outside of the container:
+The second item descends outside of the container:-
 
 	[Image of second item descending out of container]
 
@@ -728,7 +728,7 @@ around which you can add extra spacing and a border, if desired.
 
 This is used to do frames, panels, buttons etc...
 
-The CSS box model allows you to:
+The CSS box model allows you to:-
 
 	- Include spacing around content (padding)
 	- Include a border
@@ -742,7 +742,7 @@ The CSS box model allows you to:
 CSS Units of measure
 ====================
 
-Various units of measure exist, but most notably:
+Various units of measure exist, but most notably:-
 
 	- Pixels that aren't really pixels
 	- A measure known as "em" that's based on the FONT size
@@ -785,7 +785,7 @@ The problem is caused because the width:100% takes looks at the
 immediate parent, NOT the ancestry!  In this case the immediate parent
 states no width or height.
 
-Fixed:
+Fixed:-
 
 The problematic empty <div> now "transmits" size information to 
 its child items.  The box now appears magenta, as expected:

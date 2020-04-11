@@ -150,24 +150,3 @@ let DocumentToDocTree1 (document:string[]) =
 
 
 
-let ShowDocTreeList treeList =
-
-    let rec ShowDocTreeItem indentString item =
-        match item with
-
-            | DT1EmptyLine -> 
-                printfn "DT1EmptyLine:%s" indentString
-
-            | DT1Content(s) -> 
-                printfn "DT1Content  :%s" (indentString + s)
-
-            | DT1Indent(indented) ->
-                let newIndent = indentString + "    "
-                printfn "-> DT1Indent:%sv" newIndent
-                indented |> List.iter (
-                    ShowDocTreeItem newIndent)
-                printfn "<-"
-
-    treeList |> List.iter (ShowDocTreeItem "")
-
-

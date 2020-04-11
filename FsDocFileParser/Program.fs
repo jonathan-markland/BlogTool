@@ -1,6 +1,8 @@
 ﻿open DocTree1
 open DocTree2
 open DocTree3
+open Debug
+
 
 
 

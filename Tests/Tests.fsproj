@@ -9,8 +9,8 @@
 
   <ItemGroup>
     <Compile Include="TestDocumentToDocTree1.fs" />
-    <Compile Include="TestDocTree1ToDocTree2.fs" />
     <Compile Include="TestDocumentToDocTree2.fs" />
+    <Compile Include="TestDocTree1ToDocTree2.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
