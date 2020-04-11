@@ -350,3 +350,43 @@ let ``Page break at indented level`` () =
         "    Line 3"
     |]
         |> Is [ DT2Content "Line 1" ; DT2Indent ([ DT2Content "Line 2" ; DT2PageBreak ; DT2Content "Line 3" ]) ]
+
+// ----------------------------------------------------------------------------------------------
+//  PREFORMATTED SECTION
+// ----------------------------------------------------------------------------------------------
+
+[<Fact>]
+let ``Preformatted section with blank line after introducer`` () = 
+    [|
+        "Example:"
+        ""
+        "    bbb1"
+        "    bbb2"
+    |] 
+        |> Is 
+            [ 
+                DT2Content "Example:"
+                DT2EmptyLine
+                DT2Preformatted (
+                    [ 
+                        PreformattedString "bbb1"
+                        PreformattedString "bbb2"
+                    ])
+            ]
+
+[<Fact>]
+let ``Preformatted section with no blank line after introducer`` () = 
+    [|
+        "Example:"
+        "    bbb1"
+        "    bbb2"
+    |] 
+        |> Is 
+            [ 
+                DT2Content "Example:"
+                DT2Preformatted (
+                    [ 
+                        PreformattedString "bbb1"
+                        PreformattedString "bbb2"
+                    ])
+            ]

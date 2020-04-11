@@ -39,6 +39,11 @@ open DocTree1
 // This does NOT apply within a preformatted section.
 
 
+
+type PreformattedString = PreformattedString of string
+
+
+
 /// Document item representation, line-based, with additional
 /// indication of indents, bullet points, and page breaks.
 /// Note that the document is a *list* of these.
@@ -61,8 +66,9 @@ type DocTree2 =
     /// An bullet point with content represented by nesting.
     | DT2Bullet of DocTree2 list
 
-    /// A pre-formatted section with content represented by nesting.
-    | DT2Preformatted of DocTree2 list
+    /// A pre-formatted section with content converted
+    /// to text strings.
+    | DT2Preformatted of PreformattedString list
 
 
 
@@ -107,40 +113,52 @@ let IsIntroducer (str:string) =
 
 let (|PreformattedIntroduction|_|) treeList1 =
     match treeList1 with
+
         | DT1Content(thisLine)::DT1EmptyLine::DT1Indent(children)::tail ->
             if thisLine |> IsIntroducer then
-                Some(thisLine, children, tail)
+                Some(thisLine, true, children, tail)
             else
                 None
+
+        | DT1Content(thisLine)::DT1Indent(children)::tail ->
+            if thisLine |> IsIntroducer then
+                Some(thisLine, false, children, tail)
+            else
+                None
+        
         | _ ->
             None
 
 
 
-let rec DocTree1ToDocTree2Verbatim treeList1 =
+let PrettyPrintPreformattedSection treeList1 =
 
-    let translated = DocTree1ToDocTree2Verbatim
+    let indentSupplement = "    " // TODO: parameterise globally, since the client might like to tune the indentation of preformatted sections.
 
-    match treeList1 with
+    let rec translated indentPrefix treeList1 =
+
+        match treeList1 with
         
-        | DT1Content(thisLine)::tail ->
-            DT2Content(thisLine)::(translated tail)
+            | DT1EmptyLine::tail ->
+                PreformattedString("")::(translated indentPrefix tail)
 
-        | DT1Indent(children)::tail ->
-            DT2Indent(translated children)::(translated tail)
+            | DT1Content(thisLine)::tail ->
+                PreformattedString(indentPrefix + thisLine)::(translated indentPrefix tail)
 
-        | DT1EmptyLine::tail ->
-            DT2EmptyLine::(translated tail)
+            | DT1Indent(children)::tail ->
+                List.append (translated (indentPrefix + indentSupplement) children) (translated indentPrefix tail)
 
-        | [] ->
-            []
+            | [] ->
+                []
+
+    translated "" treeList1
 
 
 
 let rec DocTree1ToDocTree2 treeList1 =
 
     let translated = DocTree1ToDocTree2
-    let verbatim = DocTree1ToDocTree2Verbatim
+    let verbatim = PrettyPrintPreformattedSection
 
     match treeList1 with
         
@@ -151,8 +169,13 @@ let rec DocTree1ToDocTree2 treeList1 =
         | BulletLine(thisLine, tail) ->
             DT2Bullet([DT2Content(thisLine |> WithBulletRemoved)])::(translated tail)
 
-        | PreformattedIntroduction(thisLine, preformattedChildren, tail) ->
-            DT2Content(thisLine)::DT2Preformatted(preformattedChildren |> verbatim)::(translated tail)
+        | PreformattedIntroduction(thisLine, additionalBlankLine, preformattedChildren, tail) ->
+            let preTail =
+                DT2Preformatted(preformattedChildren |> verbatim)::(translated tail)
+            if additionalBlankLine then
+                DT2Content(thisLine)::DT2EmptyLine::preTail
+            else
+                DT2Content(thisLine)::preTail
 
         | DT1EmptyLine::DT1EmptyLine::tail ->
             DT2PageBreak::(tail |> SkippingEmptyLines |> translated)
@@ -205,11 +228,9 @@ let ShowDocTree2List treeList =
                 )
 
             | DT2Preformatted(content) ->
-                printfn "%s%s%s" indentString tab preformattedIntroducer
-                let newIndentString = indentString + tab + bulletMember
-                content |> List.iter (fun item ->
-                    ShowDocTree2Item item newIndentString
-                )
+                content 
+                    |> List.iter (fun (PreformattedString(item)) -> 
+                        printfn "%s%s%s%s" indentString tab preformattedIntroducer item)
 
             | DT2PageBreak ->
                 if indentString = initialIndent then

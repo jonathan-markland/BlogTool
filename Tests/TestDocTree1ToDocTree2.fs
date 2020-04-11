@@ -157,4 +157,78 @@ let ``Empty line kept after bullet`` () =
                 DT2Content "Other content"
             ]
 
+// ----------------------------------------------------------------------------------------------
+//  Preformatted sections
+// ----------------------------------------------------------------------------------------------
 
+[<Fact>]
+let ``Preformatted section with blank line after introducer`` () = 
+    [
+        DT1Content "Hello."
+        DT1EmptyLine
+        DT1Content "Example:"
+        DT1EmptyLine
+        DT1Indent (
+            [
+                DT1Content "if (something)"
+                DT1Content "{"
+                DT1Indent (
+                    [
+                        DT1Content "DoSomething();"
+                    ]
+                )
+                DT1Content "}"
+            ] 
+        )
+    ]
+        |> Is 
+            [
+                DT2Content "Hello."
+                DT2EmptyLine
+                DT2Content "Example:"
+                DT2EmptyLine
+                DT2Preformatted(
+                    [
+                        PreformattedString "if (something)"
+                        PreformattedString "{"
+                        PreformattedString "    DoSomething();"
+                        PreformattedString "}"
+                    ]
+                )
+            ]
+
+[<Fact>]
+let ``Preformatted section with no blank line after introducer`` () = 
+    [
+        DT1Content "Hello."
+        DT1EmptyLine
+        DT1Content "Example:"
+        DT1EmptyLine
+        DT1Indent (
+            [
+                DT1Content "if (something)"
+                DT1Content "{"
+                DT1Indent (
+                    [
+                        DT1Content "DoSomething();"
+                    ]
+                )
+                DT1Content "}"
+            ] 
+        )
+    ]
+        |> Is 
+            [
+                DT2Content "Hello."
+                DT2EmptyLine
+                DT2Content "Example:"
+                DT2EmptyLine
+                DT2Preformatted(
+                    [
+                        PreformattedString "if (something)"
+                        PreformattedString "{"
+                        PreformattedString "    DoSomething();"
+                        PreformattedString "}"
+                    ]
+                )
+            ]
