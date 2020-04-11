@@ -2,6 +2,8 @@
 
 open DocTree2
 
+(*
+
 // DocTree3
 // --------
 // Why this stage?
@@ -100,6 +102,8 @@ let ToPreformattedStringList treeList =
     let tab = "    "
     let bulletListIntroducer = "- "
     let bulletMember = "  "
+    let preformattedListIntroducer = "# "  // TODO: sort out!
+    let preformattedMember = "# "// TODO: sort out!
     let emptyLine = PreformattedString("")
 
     let mutable accumulator = []
@@ -119,6 +123,13 @@ let ToPreformattedStringList treeList =
             | DT2Bullet(indented) ->
                 let headPrefix = indentString + tab + bulletListIntroducer
                 let tailPrefix = indentString + tab + bulletMember
+                indented |> List.iteri (fun i item -> 
+                    let prefix = (if i=0 then headPrefix else tailPrefix)
+                    translate prefix item)
+
+            | DT2Preformatted(indented) ->
+                let headPrefix = indentString + tab + preformattedListIntroducer
+                let tailPrefix = indentString + tab + preformattedMember
                 indented |> List.iteri (fun i item -> 
                     let prefix = (if i=0 then headPrefix else tailPrefix)
                     translate prefix item)
@@ -178,6 +189,7 @@ let rec DocTree2ToDocTree3 codeIntroducersList treeList2 =
         | DT2EmptyLine::tail    ->  DT3EmptyLine::(translated tail)
         | DT2Content(str)::tail ->  DT3Content(str)::(translated tail)
         | DT2Indent(lst)::tail  ->  DT3Indent(translated lst)::(translated tail)
+        | DT2Preformatted(lst)::tail -> DT3Preformatted(translated lst)::(translated tail)
         | DT2Bullet(lst)::tail  ->  DT3Bullet(translated lst)::(translated tail)
         | DT2PageBreak::tail    ->  DT3PageBreak::(translated tail)
 
@@ -402,4 +414,5 @@ let rec DocTree3ToHtmlRec nestLevel treeList3 =
 let DocTree3ToHtml = DocTree3ToHtmlRec 0
 
 
+*)
 *)

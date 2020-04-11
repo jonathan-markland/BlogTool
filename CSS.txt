@@ -68,18 +68,18 @@ Secondly, you can put your CSS in THREE PLACES:
 
 MIXED into your HTML
   
-    [Code for red paragraph]
+    TODO: Code for red paragraph
 	[Pic of red paragraph]
 	
 SEPARATELY at the top of your HTML
 
-	[Code for red paragraph in separate <style> with p {}.]
+	TODO: Code for red paragraph in separate <style> with p {}.
 	[Pic of red paragraph]
 
 SEPARATELY in another file
 
-	[Code for red paragraph in separate file]
-	[Code for HTML file including that file]
+	TODO: Code for red paragraph in separate file
+	TODO: Code for HTML file including that file
 	[Pic of red paragraph]
 
 If you put CSS separately, it becomes UNLINKED from the HTML!

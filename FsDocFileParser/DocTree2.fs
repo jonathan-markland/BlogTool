@@ -26,7 +26,7 @@ open DocTree1
 //
 // Preformatted sections
 // ---------------------
-// A line of text that ends with ':' is said to be an "interoducer"
+// A line of text that ends with ':' is said to be an "introducer"
 // and if there is DT1Indent following, or DT1EmptyLine-DT1Indent,
 // then the DT1Indent is transformed into a DT2Preformatted.  This
 // indicates to later sections that the content should be treated
@@ -37,9 +37,6 @@ open DocTree1
 // -----------
 // A run of two or more DT1EmptyLines is replaced by a DT2PageBreak.
 // This does NOT apply within a preformatted section.
-
-
-// [ ] We don't have DT2Preformatted yet
 
 
 /// Document item representation, line-based, with additional
@@ -61,8 +58,11 @@ type DocTree2 =
     /// An indented section, represented by nesting.
     | DT2Indent of DocTree2 list
 
-    /// An bullet point section, represented by nesting.
+    /// An bullet point with content represented by nesting.
     | DT2Bullet of DocTree2 list
+
+    /// A pre-formatted section with content represented by nesting.
+    | DT2Preformatted of DocTree2 list
 
 
 
@@ -101,10 +101,46 @@ let (|BulletLine|_|) treeList1 =
             None
 
 
+let IsIntroducer (str:string) =
+    str.Trim().EndsWith(':')
+
+
+let (|PreformattedIntroduction|_|) treeList1 =
+    match treeList1 with
+        | DT1Content(thisLine)::DT1EmptyLine::DT1Indent(children)::tail ->
+            if thisLine |> IsIntroducer then
+                Some(thisLine, children, tail)
+            else
+                None
+        | _ ->
+            None
+
+
+
+let rec DocTree1ToDocTree2Verbatim treeList1 =
+
+    let translated = DocTree1ToDocTree2Verbatim
+
+    match treeList1 with
+        
+        | DT1Content(thisLine)::tail ->
+            DT2Content(thisLine)::(translated tail)
+
+        | DT1Indent(children)::tail ->
+            DT2Indent(translated children)::(translated tail)
+
+        | DT1EmptyLine::tail ->
+            DT2EmptyLine::(translated tail)
+
+        | [] ->
+            []
+
+
 
 let rec DocTree1ToDocTree2 treeList1 =
 
     let translated = DocTree1ToDocTree2
+    let verbatim = DocTree1ToDocTree2Verbatim
 
     match treeList1 with
         
@@ -115,14 +151,17 @@ let rec DocTree1ToDocTree2 treeList1 =
         | BulletLine(thisLine, tail) ->
             DT2Bullet([DT2Content(thisLine |> WithBulletRemoved)])::(translated tail)
 
+        | PreformattedIntroduction(thisLine, preformattedChildren, tail) ->
+            DT2Content(thisLine)::DT2Preformatted(preformattedChildren |> verbatim)::(translated tail)
+
+        | DT1EmptyLine::DT1EmptyLine::tail ->
+            DT2PageBreak::(tail |> SkippingEmptyLines |> translated)
+
         | DT1Content(thisLine)::tail ->
             DT2Content(thisLine)::(translated tail)
 
         | DT1Indent(children)::tail ->
             DT2Indent(translated children)::(translated tail)
-
-        | DT1EmptyLine::DT1EmptyLine::tail ->
-            DT2PageBreak::(tail |> SkippingEmptyLines |> translated)
 
         | DT1EmptyLine::tail ->
             DT2EmptyLine::(translated tail)
@@ -132,10 +171,14 @@ let rec DocTree1ToDocTree2 treeList1 =
 
 
 
+/// Show a representation of the DocTree2 tree.
+/// Intended for debug-examination of the tree.
 let ShowDocTree2List treeList =
 
+    let initialIndent = "// "
     let tab = "--->"
     let bulletListIntroducer = "+ "
+    let preformattedIntroducer = "# "
     let bulletMember = "> "
     let emptyLine = "~"
 
@@ -161,10 +204,20 @@ let ShowDocTree2List treeList =
                     ShowDocTree2Item item newIndentString
                 )
 
-            | DT2PageBreak ->
-                printfn "--------------------- page break -----------------------"
+            | DT2Preformatted(content) ->
+                printfn "%s%s%s" indentString tab preformattedIntroducer
+                let newIndentString = indentString + tab + bulletMember
+                content |> List.iter (fun item ->
+                    ShowDocTree2Item item newIndentString
+                )
 
-    treeList |> List.iter (fun x -> ShowDocTree2Item x "// ")
+            | DT2PageBreak ->
+                if indentString = initialIndent then
+                    printfn "--------------------- page break -----------------------"
+                else
+                    printfn "--------------------- page break ** WARNING:  within child sub-tree ** -----------------------"
+
+    treeList |> List.iter (fun x -> ShowDocTree2Item x initialIndent)
 
 
 
