@@ -390,3 +390,33 @@ let ``Preformatted section with no blank line after introducer`` () =
                         PreformattedString "bbb2"
                     ])
             ]
+
+[<Fact>]
+let ``Not Preformatted`` () = 
+    [|
+        "Not preformatted:"
+        ""
+        "bbb1"
+        "bbb2"
+    |] 
+        |> Is 
+            [ 
+                DT2Content "Not preformatted:"
+                DT2EmptyLine
+                DT2Content "bbb1"
+                DT2Content "bbb2"
+            ]
+
+[<Fact>]
+let ``Also not Preformatted`` () = 
+    [|
+        "Not preformatted:"
+        "bbb1"
+        "bbb2"
+    |] 
+        |> Is 
+            [ 
+                DT2Content "Not preformatted:"
+                DT2Content "bbb1"
+                DT2Content "bbb2"
+            ]
