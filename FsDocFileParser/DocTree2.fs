@@ -78,29 +78,48 @@ let rec SkippingEmptyLines lst =
 
 
 
+let (|BulletFollowedByIndent|_|) treeList1 =
+    match treeList1 with
+        | DT1Content(thisLine)::DT1Indent(children)::tail ->
+            if thisLine.StartsWith("- ") then
+                Some(thisLine, children, tail)
+            else
+                None
+        | _ -> 
+            None
+
+
+
+let (|BulletLine|_|) treeList1 =
+    match treeList1 with
+        | DT1Content(thisLine)::tail ->
+            if thisLine.StartsWith("- ") then
+                Some(thisLine, tail)
+            else
+                None
+        | _ ->
+            None
+
+
+
 let rec DocTree1ToDocTree2 treeList1 =
 
     let translated = DocTree1ToDocTree2
 
     match treeList1 with
         
-        | DT1Content(str)::DT1Indent(lst)::tail ->
-            if str.StartsWith("- ") then
-                DT2Bullet(DT2Content(str |> WithBulletRemoved)::(translated lst))
-                    ::(translated tail)
-            else
-                DT2Content(str)
-                    ::DT2Indent(translated lst)
-                    ::(translated tail)
+        | BulletFollowedByIndent(thisLine, children, tail) ->
+            let bulletContent = DT2Content(thisLine |> WithBulletRemoved)::(translated children)
+            DT2Bullet(bulletContent)::(translated tail)
 
-        | DT1Content(str)::tail ->
-            if str.StartsWith("- ") then
-                DT2Bullet([DT2Content(str |> WithBulletRemoved)])::(translated tail)
-            else
-                DT2Content(str)::(translated tail)
+        | BulletLine(thisLine, tail) ->
+            DT2Bullet([DT2Content(thisLine |> WithBulletRemoved)])::(translated tail)
 
-        | DT1Indent(lst)::tail ->
-            DT2Indent(translated lst)::(translated tail)
+        | DT1Content(thisLine)::tail ->
+            DT2Content(thisLine)::(translated tail)
+
+        | DT1Indent(children)::tail ->
+            DT2Indent(translated children)::(translated tail)
 
         | DT1EmptyLine::DT1EmptyLine::tail ->
             DT2PageBreak::(tail |> SkippingEmptyLines |> translated)
