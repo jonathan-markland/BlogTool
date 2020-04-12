@@ -68,6 +68,31 @@ let ``Paragraph grouping with indents`` () =
                 DT3Paragraph("And back.")
             ]
 
+[<Fact>]
+let ``Paragraph grouping with indents with multiple blank lines`` () = 
+    [| 
+        "An example."
+        "    Indented paragraph"
+        "    of two lines."
+        ""
+        ""
+        ""   // Reminder:  Multiple blank lines do NOT combine to page breaks in an indented context.
+        ""
+        ""
+        ""
+        "    Followed by a second paragraph."
+        "And back."
+    |] 
+        |> Is 
+            [
+                DT3Paragraph("An example.")
+                DT3Indent([
+                    DT3Paragraph("Indented paragraph of two lines.")
+                    DT3Paragraph("Followed by a second paragraph.")
+                ])
+                DT3Paragraph("And back.")
+            ]
+
 // ----------------------------------------------------------------------------------------------
 //  Square bracketed line
 // ----------------------------------------------------------------------------------------------

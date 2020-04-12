@@ -110,7 +110,7 @@ let ``Title 3 single line title`` () =
 [<Fact>]
 let ``Empty lines get discarded`` () = 
     [
-        DT2Content ""
+        DT2EmptyLine
     ] |> Is 
         [
         ]
@@ -124,7 +124,7 @@ let ``Empty line splits paragraphs`` () =
     [
         DT2Content "First paragraph"
         DT2Content "goes here."
-        DT2Content ""
+        DT2EmptyLine
         DT2Content "Second paragraph"
         DT2Content "goes here."
     ] |> Is 
@@ -138,10 +138,10 @@ let ``Empty line splits two paragraphs`` () =
     [
         DT2Content "First paragraph"
         DT2Content "goes here."
-        DT2Content ""
+        DT2EmptyLine
         DT2Content "Second paragraph"
         DT2Content "goes here."
-        DT2Content ""
+        DT2EmptyLine
         DT2Content "Third paragraph"
         DT2Content "goes here."
     ] |> Is 
@@ -151,7 +151,60 @@ let ``Empty line splits two paragraphs`` () =
             DT3Paragraph "Third paragraph goes here."
         ]
 
-(*
+// ----------------------------------------------------------------------------------------------
+//  Paragraphs and indentation relationship
+// ----------------------------------------------------------------------------------------------
+
+[<Fact>]
+let ``Indented paragraphs`` () = 
+    [
+        DT2Content "First paragraph"
+        DT2Content "goes here."
+        DT2EmptyLine
+        DT2Indent([
+            DT2Content "Second paragraph"
+            DT2Content "goes here."
+            DT2EmptyLine
+            DT2Content "Third paragraph"
+            DT2Content "goes here."
+        ])
+    ] |> Is 
+        [
+            DT3Paragraph "First paragraph goes here."
+            DT3Indent([
+                DT3Paragraph "Second paragraph goes here."
+                DT3Paragraph "Third paragraph goes here."
+            ])
+        ]
+
+[<Fact>]
+let ``Indented paragraphs with blank line tidying`` () = 
+    [
+        DT2EmptyLine
+        DT2Content "First paragraph"
+        DT2Content "goes here."
+        DT2EmptyLine
+        DT2Indent([
+            DT2Content "Second paragraph"
+            DT2Content "goes here."
+            DT2EmptyLine
+            DT2EmptyLine  // Reminder: Indented empty lines NEVER combine to DT2PageBreaks!
+            DT2EmptyLine
+            DT2Content "Third paragraph"
+            DT2Content "goes here."
+        ])
+        DT2EmptyLine
+    ] |> Is 
+        [
+            DT3Paragraph "First paragraph goes here."
+            DT3Indent([
+                DT3Paragraph "Second paragraph goes here."
+                DT3Paragraph "Third paragraph goes here."
+            ])
+        ]
+
+
+(*  TODO: Maybe consider these test cases:
 
         //
         // Fallback cases (1:1 translation with DT2):
