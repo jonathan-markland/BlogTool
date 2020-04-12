@@ -39,6 +39,9 @@
 // without it including too many functions.
 
 
+// ----------------------------------------------------------------------------------------------
+//  Tree types
+// ----------------------------------------------------------------------------------------------
 
 /// Document item representation, line-based, but 
 /// using nesting for indentation.  Note that the document is
@@ -56,6 +59,9 @@ type DocTree1 =
     | DT1Indent of DocTree1 list
 
 
+// ----------------------------------------------------------------------------------------------
+//  Empty row detection
+// ----------------------------------------------------------------------------------------------
 
 let IsDT1EmptyRow row =
     match row with 
@@ -63,8 +69,11 @@ let IsDT1EmptyRow row =
         | _ -> false
 
 
+// ----------------------------------------------------------------------------------------------
+//  Indentation measurement
+// ----------------------------------------------------------------------------------------------
 
-let private LeftSideIndentation (str:string) =
+let LeftSideIndentation (str:string) =
     let mutable i = 0
     let mutable x = 0
     let n = str.Length
@@ -77,6 +86,9 @@ let private LeftSideIndentation (str:string) =
     str.Substring(0, x)
 
  
+// ----------------------------------------------------------------------------------------------
+//  Translation
+// ----------------------------------------------------------------------------------------------
 
 let DocumentToDocTree1 (document:string[]) =
 
@@ -141,6 +153,7 @@ let DocumentToDocTree1 (document:string[]) =
         else
             // No further rows.
             (treeList, rowIndex) ||> backtractedOverEmptyRows
+
 
     translatedDocument document 0 "" []
         |> includingTrailingEmptyRows document

@@ -40,9 +40,12 @@ open DocTree1
 
 
 
+
+// ----------------------------------------------------------------------------------------------
+//  Tree types
+// ----------------------------------------------------------------------------------------------
+
 type PreformattedString = PreformattedString of string
-
-
 
 /// Document item representation, line-based, with additional
 /// indication of indents, bullet points, and page breaks.
@@ -70,18 +73,12 @@ type DocTree2 =
     /// to text strings.
     | DT2Preformatted of PreformattedString list
 
-
+// ----------------------------------------------------------------------------------------------
+//  Bullet handling
+// ----------------------------------------------------------------------------------------------
 
 let WithBulletRemoved (str:string) =
     str.Substring(2, str.Length-2)
-
-
-
-let rec SkippingEmptyLines lst =
-    match lst with
-        | DT1EmptyLine::tail -> tail |> SkippingEmptyLines
-        | _ -> lst
-
 
 
 let (|BulletFollowedByIndent|_|) treeList1 =
@@ -95,7 +92,6 @@ let (|BulletFollowedByIndent|_|) treeList1 =
             None
 
 
-
 let (|BulletLine|_|) treeList1 =
     match treeList1 with
         | DT1Content(thisLine)::tail ->
@@ -106,6 +102,18 @@ let (|BulletLine|_|) treeList1 =
         | _ ->
             None
 
+// ----------------------------------------------------------------------------------------------
+//  Page breaks
+// ----------------------------------------------------------------------------------------------
+
+let rec SkippingEmptyLines lst =
+    match lst with
+        | DT1EmptyLine::tail -> tail |> SkippingEmptyLines
+        | _ -> lst
+
+// ----------------------------------------------------------------------------------------------
+//  Preformatted section introduction
+// ----------------------------------------------------------------------------------------------
 
 let IsIntroducer (str:string) =
     str.Trim().EndsWith(':')
@@ -153,17 +161,20 @@ let PrettyPrintPreformattedSection treeList1 =
 
     translated "" treeList1
 
+// ----------------------------------------------------------------------------------------------
+//  Translation
+// ----------------------------------------------------------------------------------------------
 
+let rec DocTree1ToDocTree2a nestLevel treeList1 =
 
-let rec DocTree1ToDocTree2 treeList1 =
-
-    let translated = DocTree1ToDocTree2
+    let translated = DocTree1ToDocTree2a nestLevel
+    let translatedChildren = DocTree1ToDocTree2a (nestLevel + 1)
     let verbatim = PrettyPrintPreformattedSection
 
     match treeList1 with
         
         | BulletFollowedByIndent(thisLine, children, tail) ->
-            let bulletContent = DT2Content(thisLine |> WithBulletRemoved)::(translated children)
+            let bulletContent = DT2Content(thisLine |> WithBulletRemoved)::(translatedChildren children)
             DT2Bullet(bulletContent)::(translated tail)
 
         | BulletLine(thisLine, tail) ->
@@ -177,20 +188,27 @@ let rec DocTree1ToDocTree2 treeList1 =
             else
                 DT2Content(thisLine)::preTail
 
-        | DT1EmptyLine::DT1EmptyLine::tail ->
-            DT2PageBreak::(tail |> SkippingEmptyLines |> translated)
-
         | DT1Content(thisLine)::tail ->
             DT2Content(thisLine)::(translated tail)
 
         | DT1Indent(children)::tail ->
-            DT2Indent(translated children)::(translated tail)
+            DT2Indent(translatedChildren children)::(translated tail)
 
         | DT1EmptyLine::tail ->
-            DT2EmptyLine::(translated tail)
+            if nestLevel > 0 then
+                DT2EmptyLine::(translated tail)
+            else
+                match tail with 
+                    | DT1EmptyLine::tail2 ->
+                        DT2PageBreak::(tail2 |> SkippingEmptyLines |> translated)
+                    | _ ->
+                        DT2EmptyLine::(translated tail)
 
         | [] ->
             []
 
 
+
+let DocTree1ToDocTree2 treeList1 =
+    DocTree1ToDocTree2a 0 treeList1
 

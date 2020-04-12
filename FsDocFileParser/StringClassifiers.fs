@@ -29,6 +29,7 @@ let IsHeading2Underline = IsStringAll '-'
 let IsPunctuation ch = (ch = '.') || (ch = '!') || (ch = '?') || (ch = ':')
 
 let LooksLikeSingleLineTitle (str:string) =
+    let str = str.Trim()
     str.Length > 1
         && str.[0] |> System.Char.IsLetterOrDigit
         && not (str.[str.Length-1] |> IsPunctuation)

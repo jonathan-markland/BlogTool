@@ -338,7 +338,7 @@ let ``Page break at main level`` () =
         |> Is [ DT2Content "Line 1" ; DT2PageBreak ; DT2Content "Line 2" ]
 
 [<Fact>]
-let ``Page break at indented level`` () = 
+let ``Page break attempted at indented level gives just empty lines`` () = 
 
     // Although this might be post filtered as an error in some applications.
 
@@ -349,7 +349,7 @@ let ``Page break at indented level`` () =
         ""
         "    Line 3"
     |]
-        |> Is [ DT2Content "Line 1" ; DT2Indent ([ DT2Content "Line 2" ; DT2PageBreak ; DT2Content "Line 3" ]) ]
+        |> Is [ DT2Content "Line 1" ; DT2Indent ([ DT2Content "Line 2" ; DT2EmptyLine ; DT2EmptyLine ; DT2Content "Line 3" ]) ]
 
 // ----------------------------------------------------------------------------------------------
 //  PREFORMATTED SECTION
