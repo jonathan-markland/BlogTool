@@ -24,23 +24,26 @@ also implied a lot about APPEARENCE and POSITIONING of that stuff too!
 This still shows up today in the DEFAULT CHARACTERISTICS of some
 HTML tags:
 
-	[This HTML code with three spans]
+	TODO: This HTML code with three spans.
+	
 	[Shows like this in a row]
 	
-	[This HTML code with spans changed to divs]
+	TODO: This HTML code with spans changed to divs.
+	
 	[Shows like this is a column]
 
 Today...
 
 Now that CSS 100% rules, I can make div and span do DIFFERENT THINGS:
   
-    TODO: show span and div behaving opposite to traditional defaults with CSS.
+	TODO: show span and div behaving opposite to traditional defaults with CSS.
 
-	[This HTML code with three spans as display:block]
+	TODO: This HTML code with three spans as display:block.
+	
 	[Shows like this in a column]
 	Woo it arranges like <div> used to!
 	
-	[This HTML code with divs changed to spans as display:inline-block]
+	TODO: This HTML code with divs changed to spans as display:inline-block.
 	[Shows like this is a row]
 	Woo it arranges like <span> used to!
 
@@ -60,26 +63,30 @@ Firstly, CSS language consists of PROPERTIES that look this this:
 	background-colour: red;
 	width: 100%;
 
-Secondly, you can put your CSS in THREE PLACES:
+Secondly, you can put your CSS in THREE PLACES:-
 
-	- MIXED into your HTML in a style='...' attribute
-	- SEPARATELY at the top of your HTML, in a <style>...</style> tag
-	- SEPARATELY in another file, with extension ".css"
+	- MIXED into your HTML in a style='...' attribute.
+	- SEPARATELY at the top of your HTML, in a <style>...</style> tag.
+	- SEPARATELY in another file, with extension ".css".
 
 MIXED into your HTML
   
-    TODO: Code for red paragraph
+	TODO: Code for red paragraph.
+	
 	[Pic of red paragraph]
 	
 SEPARATELY at the top of your HTML
 
 	TODO: Code for red paragraph in separate <style> with p {}.
+	
 	[Pic of red paragraph]
 
 SEPARATELY in another file
 
-	TODO: Code for red paragraph in separate file
-	TODO: Code for HTML file including that file
+	TODO: Code for red paragraph in separate file.
+	
+	TODO: Code for HTML file including that file.
+	
 	[Pic of red paragraph]
 
 If you put CSS separately, it becomes UNLINKED from the HTML!
@@ -113,9 +120,9 @@ Because the same stuff over and over is boring...
 
 The easiest bit of CSS is setting the APPEARANCE of stuff.
 
-	- colour
-	- background colours
-	- fonts
+	- colour.
+	- background colours.
+	- fonts.
 
 	[Show some RESULT IMAGES and style=]
 
@@ -326,17 +333,17 @@ examples, so I will show these together.
 The CSS "display:", "width:" and "height:" properties combine together
 to control loads of aspects of size and position.
 
-Two broad themes when positioning things in the browser are:
+Two broad themes when positioning things in the browser are:-
 
-	- Some things flow like PARAGRAPHs
-	- Some things are CONTAINER BOXES which position their child items
+	- Some things flow like PARAGRAPHs.
+	- Some things are CONTAINER BOXES which position their child items.
 
-Three themes when SIZING things in the browser are:
+Three themes when SIZING things in the browser are:-
 
-	- "ATOMIC" things are a fixed size (dammit!)
+	- "ATOMIC" things are a fixed size (dammit!).
 	- Some things have no direct size, they tight-fit around their content,
 	  so it's the content that's setting the size.
-	- Some things want to STRETCH to FILL OUT SPACE
+	- Some things want to STRETCH to FILL OUT SPACE.
 
 Anything that wants to STRETCH to fill out space CANNOT JUST DO THAT.
 It must have a PARENT container that is telling it the available space!
@@ -440,9 +447,9 @@ This is all about "display:flex", which should go on the container.
 
 This can do:-
 
-	- Arrangement in a row
-	- Arrangement in a column
-	- Arrangement like icons in Windows Explorer
+	- Arrangement in a row.
+	- Arrangement in a column.
+	- Arrangement like icons in Windows Explorer.
 
 For this, I do need to have a container to contain the things that are
 being arranged.  I'll apply a fixed size to that, for illustration, but it could
@@ -453,9 +460,9 @@ Example:
 	<style>
 	outerthing {
 		display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
 		flex-wrap: nowrap;
 		width: 10em;
 		height: 10em;
@@ -494,13 +501,13 @@ The child items CAN be of differing sizes.
 - Try changing the flex-direction to "column".
 - Try changing the align-items between "flex-start", "center", and "flex-end".
 - Try changing the justify-content between "flex-start", "center", and "flex-end".
-- Try changing the flex-wrap between "nowrap" and "wrap" while inserting 
+- Try changing the flex-wrap between "nowrap" and "wrap" while inserting.
   LOADS MORE red blue and green child items.
   
 There are many properties associated with "display:flex" that support arrangement
 of items, so be sure to check out this resource:
 
-	- https://css-tricks.com/snippets/css/a-guide-to-flexbox/
+	- https://css-tricks.com/snippets/css/a-guide-to-flexbox/ .
 
 SPLIT UP THE SCREEN LIKE A DESKTOP APP
 
@@ -516,12 +523,12 @@ The following grid has TWO columns, and FOUR rows.
 
 The first column is fixed width (8em), and the second fills the remaining space (auto):
 
-        grid-template-columns: 8em auto;
+		grid-template-columns: 8em auto;
 
 The first row is fixed height (2em) as is the second and fourth.
 The third row fills the remaining height (auto):
 
-        grid-template-rows: 2em 2em auto 2em;
+		grid-template-rows: 2em 2em auto 2em;
 
 The grid-template-areas property contains invented cell names. This then indicates 
 how to build cells that can SPAN COLUMNS or rows:
@@ -546,8 +553,8 @@ Example:
 		width: 50em;
 		height: 20em;
 		background-color: #EEEEEE;
-        grid-template-columns: 8em auto;
-        grid-template-rows: 2em 2em auto 2em;
+		grid-template-columns: 8em auto;
+		grid-template-rows: 2em 2em auto 2em;
 		grid-template-areas: 
 			"title title"
 			"menu menu"
@@ -632,7 +639,7 @@ It's easy to end up with "container" behaviour with HTML and CSS.
 However, you need to control what happens with content that is 
 larger than the container.
 
-The options are:
+The options are:-
 
 	- Allow it to visually overflow the area of the container
 	- Clip it to the container
@@ -651,7 +658,7 @@ Example:
 	<style>
 	
 	container {
-    	display: block;
+		display: block;
 		width: 10em;
 		height: 10em;
 		background-color: #EEEEEE;
@@ -659,17 +666,17 @@ Example:
 	}
 	
 	inner1 {
-    	display: block;
+		display: block;
 		background-color: #5AA9C2;
-        width: 7em;
-        height: 7em;
+		width: 7em;
+		height: 7em;
 	}
 
 	inner2 {
-    	display: block;
+		display: block;
 		background-color: #BBBBBB;
-        width: 7em;
-        height: 7em;
+		width: 7em;
+		height: 7em;
 	}
 	
 	</style>
