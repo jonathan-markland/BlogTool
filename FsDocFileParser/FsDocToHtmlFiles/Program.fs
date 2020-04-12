@@ -6,58 +6,62 @@ open DocTree3
 open ListSplit
 
 
-let escaped (s:string) = 
 
-    let Repl (searchChar:string) (replaceStr:string) (str:string) =
+let EscapedForHTML (rawString:string) = 
+
+    let replacing (searchChar:string) (replaceStr:string) (str:string) =
         // Ensure we create no garbage when there is nothing to replace:
         if str.Contains(searchChar) then str.Replace(searchChar, replaceStr) else str
 
-    s |> Repl "&" "&amp;" |> Repl "<" "&lt;" |> Repl ">" "&gt;" |> Repl "\"" "&quot;"
+    rawString 
+        |> replacing "&" "&amp;" 
+        |> replacing "<" "&lt;" 
+        |> replacing ">" "&gt;" 
+        |> replacing "\"" "&quot;"
 
 
 
+let ToTraditionalHTML treeList3 = 
 
-let rec PreToHtml lst = 
-    let mutable str = ""
-    lst |> List.iter (fun (PreformattedString(s)) -> str <- str + (s |> escaped) + "<br/>")
-    str
+    // TODO: This is not absolutely performant with the use of .Net string concatenations.
 
+    let rec preformattedToHTML lst = 
+        let mutable str = ""
+        lst |> List.iter (fun (PreformattedString(s)) -> str <- str + (s |> EscapedForHTML) + "<br/>")
+        str
 
-let ToHtml2 treeList3 = 
-
-    let rec ToHtml outerContext treeList3 =
+    let rec recurse outerContext treeList3 =
 
         let raw name content tail =
             if outerContext = "li" then
-                content + (tail |> ToHtml outerContext)
+                content + (tail |> recurse outerContext)
             else
-                "<" + name + ">" + content + "</" + name + ">" + (tail |> ToHtml outerContext)
+                "<" + name + ">" + content + "</" + name + ">" + (tail |> recurse outerContext)
 
         let text name content tail =
-            raw name (content |> escaped) tail
+            raw name (content |> EscapedForHTML) tail
 
         let html name content tail =
-            raw name (content |> ToHtml name) tail
+            raw name (content |> recurse name) tail
 
         let headingTag level =
-                match level with
-                    | Heading1 -> "h1"
-                    | Heading2 -> "h2"
-                    | Heading3 -> "h3"
+            match level with
+                | Heading1 -> "h1"
+                | Heading2 -> "h2"
+                | Heading3 -> "h3"
 
         match treeList3 with
-
-            | DT3Bullet content::tail            -> html "li" content tail
-            | DT3Indent content::tail            -> html "blockquote" content tail
-            | DT3Paragraph content::tail         -> text "p" content tail
-            | DT3Heading(level, content)::tail   -> text (headingTag level) content tail
-            | DT3PageBreak::tail                 -> tail |> ToHtml outerContext
-            | DT3SubstitutionDirective dir::tail -> text "p" dir tail
-            | DT3Preformatted lst::tail          -> "<blockquote><pre>" + (lst |> PreToHtml) + "</pre></blockquote>" + (tail |> ToHtml outerContext)
+            | DT3Bullet(content)::tail            -> html "li" content tail
+            | DT3Indent(content)::tail            -> html "blockquote" content tail
+            | DT3Paragraph(content)::tail         -> text "p" content tail
+            | DT3Heading(level, content)::tail    -> text (headingTag level) content tail
+            | DT3PageBreak::tail                  -> tail |> recurse outerContext
+            | DT3SubstitutionDirective(dir)::tail -> text "p" dir tail
+            | DT3Preformatted(lst)::tail          -> "<blockquote><pre>" + (lst |> preformattedToHTML) + "</pre></blockquote>" + (tail |> recurse outerContext)
             | [] -> ""
 
 
-    ToHtml "" treeList3
+    recurse "" treeList3
 
 
 
@@ -65,7 +69,7 @@ let ToHtml2 treeList3 =
 let main argv =
 
     let document = 
-        System.IO.File.ReadAllLines(@"C:\Users\ukjmak\source\repos\FsDocFileParser\CSS.txt")
+        System.IO.File.ReadAllLines(@"C:\Users\ukjmak\source\repos\BlogTool\FsDocFileParser\CSS.txt")
     
     let treeList = 
         document 
@@ -75,10 +79,11 @@ let main argv =
 
     let splitAtPageBreaks = treeList |> ListSplit ((=) DT3PageBreak)
 
-    let listOfHtml = splitAtPageBreaks |> List.map ToHtml2
+    let listOfHtml = splitAtPageBreaks |> List.map ToTraditionalHTML
 
     listOfHtml |> List.iteri (fun i page -> 
-        let path = sprintf @"C:\Users\ukjmak\source\repos\tmp\file%d.html" i
-        System.IO.File.WriteAllText(path, page) )
+        if page.Length > 0 then
+            let path = sprintf @"C:\Users\ukjmak\source\repos\tmp\file%d.html" i
+            System.IO.File.WriteAllText(path, page) )
 
     0 // return an integer exit code

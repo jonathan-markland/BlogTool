@@ -2,10 +2,13 @@
 
 
 
+[<Struct>]
 type ListSlice<'a> = { Start: 'a list ; Count: int }
 
 
 
+/// Splits the input list where the isSeparator predicate returns true.
+/// Returns a list of the sub-lists.  The separators are removed in the result.
 let ListSplitToSlices isSeparator theList =
 
     let counterReset = 0
