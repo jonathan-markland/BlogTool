@@ -12,7 +12,7 @@ Links
 The "TryIt" editor is very useful to have a quick go with most CSS + HTML
 features.
 
-	- https://www.w3schools.com/html/tryit.asp?filename=tryhtml_basic
+	https://www.w3schools.com/html/tryit.asp?filename=tryhtml_basic
 
 
 

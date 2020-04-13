@@ -104,7 +104,8 @@ type Level = Outer | Nested
 
 let rec ConvertedMainlyToDocTree3 nestLevel treeList2 =
 
-    let translated = ConvertedMainlyToDocTree3 Nested
+    let withNested = ConvertedMainlyToDocTree3 Nested
+    let withTail   = ConvertedMainlyToDocTree3 nestLevel
 
     match treeList2, nestLevel with
 
@@ -114,16 +115,16 @@ let rec ConvertedMainlyToDocTree3 nestLevel treeList2 =
 
         | SquareBracketedLine (line,tail), _ -> 
             let trimmedDirective = line.Trim()
-            DT3SubstitutionDirective(trimmedDirective)::(translated tail)
+            DT3SubstitutionDirective(trimmedDirective)::(withTail tail)
 
         | Title1WithUnderline(title,tail), Outer ->
-            DT3Heading(Heading1, title)::(translated tail)
+            DT3Heading(Heading1, title)::(withTail tail)
 
         | Title2WithUnderline(title,tail), Outer ->
-            DT3Heading(Heading2, title)::(translated tail)
+            DT3Heading(Heading2, title)::(withTail tail)
 
         | Paragraph(content,tail), _ ->
-            DT3Paragraph(content)::(translated tail)
+            DT3Paragraph(content)::(withTail tail)
 
         // Reminder:  Single line titles done by caller!
 
@@ -131,12 +132,12 @@ let rec ConvertedMainlyToDocTree3 nestLevel treeList2 =
         // Fallback cases (1:1 translation with DT2):
         //
         
-        | DT2EmptyLine::tail, _         ->  translated tail
-        | DT2Content(str)::tail, _      ->  DT3Paragraph(str)::(translated tail)
-        | DT2Indent(lst)::tail, _       ->  DT3Indent(translated lst)::(translated tail)
-        | DT2Preformatted(x)::tail, _   ->  DT3Preformatted(x)::(translated tail)
-        | DT2Bullet(lst)::tail, _       ->  DT3Bullet(translated lst)::(translated tail)
-        | DT2PageBreak::tail, _         ->  DT3PageBreak::(translated tail)
+        | DT2EmptyLine::tail, _         ->  withTail tail
+        | DT2Content(str)::tail, _      ->  DT3Paragraph(str)::(withTail tail)
+        | DT2Indent(lst)::tail, _       ->  DT3Indent(withNested lst)::(withTail tail)
+        | DT2Preformatted(x)::tail, _   ->  DT3Preformatted(x)::(withTail tail)
+        | DT2Bullet(lst)::tail, _       ->  DT3Bullet(withNested lst)::(withTail tail)
+        | DT2PageBreak::tail, _         ->  DT3PageBreak::(withTail tail)
         | [], _ -> []
 
 

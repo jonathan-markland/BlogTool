@@ -141,6 +141,26 @@ let ``Not a Heading 2 when indented`` () =
     |] 
         |> Is [ DT3Indent([DT3Paragraph "Examples --------"]) ]
 
+[<Fact>]
+let ``Headings at level 1 and 2 with a bit of document`` () = 
+    [|
+        "First"
+        "====="
+        ""
+        "Second"
+        "------"
+        ""
+        "This is a paragraph"
+        "with two lines."
+    |] 
+        |> Is 
+            [ 
+                DT3Heading(Heading1, "First") 
+                DT3Heading(Heading2, "Second") 
+                DT3Paragraph("This is a paragraph with two lines.") 
+            ]
+
+
 // ----------------------------------------------------------------------------------------------
 //  Single line title
 // ----------------------------------------------------------------------------------------------
