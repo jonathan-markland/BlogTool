@@ -143,8 +143,8 @@ let rec WithSingleLineTitlesRatherThanParagraphs treeList3 =
                     DT3Heading(Heading3, content)
                 else
                     item
-            | DT3Bullet(children) -> DT3Bullet(children |> WithSingleLineTitlesRatherThanParagraphs)
-            | DT3Indent(children) -> DT3Indent(children |> WithSingleLineTitlesRatherThanParagraphs)
+            | DT3Bullet(children) -> DT3Bullet(children)
+            | DT3Indent(children) -> DT3Indent(children)
             | _ -> item
         )
 

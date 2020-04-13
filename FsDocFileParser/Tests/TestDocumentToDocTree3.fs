@@ -125,16 +125,39 @@ let ``Heading 2`` () =
     |] 
         |> Is [ DT3Heading(Heading2, "Examples") ]
 
+[<Fact>]
+let ``Not a Heading 1 when indented`` () = 
+    [|
+        "    Introduction"
+        "    ============"
+    |] 
+        |> Is [ DT3Paragraph "Introduction" ; DT3Paragraph "============" ]
+
+[<Fact>]
+let ``Not a Heading 2 when indented`` () = 
+    [|
+        "    Examples"
+        "    --------"
+    |] 
+        |> Is [ DT3Paragraph "Examples" ; DT3Paragraph "--------" ]
+
 // ----------------------------------------------------------------------------------------------
 //  Single line title
 // ----------------------------------------------------------------------------------------------
 
 [<Fact>]
-let ``Heading 3 single line title`` () = 
+let ``Heading 3 single line title only applies at top level`` () = 
     [|
         "Examples"
     |] 
         |> Is [ DT3Heading(Heading3, "Examples") ]
+
+[<Fact>]
+let ``Not a single line title when indented`` () = 
+    [|
+        "    Indented single line"
+    |] 
+        |> Is [ DT3Indent([DT3Paragraph "Indented single line"]) ]
 
 // ----------------------------------------------------------------------------------------------
 //  Page breaks

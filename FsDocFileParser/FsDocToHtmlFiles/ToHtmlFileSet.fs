@@ -70,6 +70,14 @@ let ToHtmlImageTag (leafName:string) =
 
 
 
+let ConsideredForItalics (content:string) =
+    if content.StartsWith("...") || content.EndsWith("...") || content.EndsWith("...:") then
+        "<em>" + content + "</em>"
+    else
+        content
+
+
+
 let ListOfImageFilesWithin (page:string) =
     let regex = new System.Text.RegularExpressions.Regex("<img src=\"([a-zA-Z0-9\- \.]*)\"></img>")
     let results = regex.Matches(page) //:> System.Text.RegularExpressions.MatchCollection
@@ -102,7 +110,8 @@ let DocTree3ToTraditionalHTML substitutionProvider treeList3 =
                 "<" + name + ">" + content + "</" + name + ">" + (tail |> recurse outerContext)   // TODO: Leave tail recursion to caller I think.
 
         let text name content tail =
-            raw name (content |> EscapedForHTML) tail
+            let content = content |> EscapedForHTML |> ConsideredForItalics
+            raw name content tail
 
         let html name content tail =
             raw name (content |> recurse name) tail

@@ -6,7 +6,15 @@ their CSS knowledge recently.  Oh, with a slant that you'll be making APPS.
 
 Other people might find this interesting anyway.
 
-	[Image of second item descending out of container]
+Links
+-----
+
+The "TryIt" editor is very useful to have a quick go with most CSS + HTML
+features.
+
+	- https://www.w3schools.com/html/tryit.asp?filename=tryhtml_basic
+
+
 
 
 Background
@@ -25,30 +33,39 @@ also implied a lot about APPEARENCE and POSITIONING of that stuff too!
 This still shows up today in the DEFAULT CHARACTERISTICS of some
 HTML tags:
 
-	TODO: This HTML code with three spans.
+	<span>A</span><span>B</span><span>C</span>
 	
-	[Shows like this in a row]
+	[Three spans in a row]
 	
-	TODO: This HTML code with spans changed to divs.
+	<div>A</div><div>B</div><div>C</div>
 	
-	[Shows like this is a column]
+	[Three divs in a row]
 
 Today...
 
 Now that CSS 100% rules, I can make div and span do DIFFERENT THINGS:
+
+Span can behave like div...:
   
-	TODO: show span and div behaving opposite to traditional defaults with CSS.
+	<style>
+	span { display:block; }
+	</style>
 
-	TODO: This HTML code with three spans as display:block.
-	
-	[Shows like this in a column]
-	Woo it arranges like <div> used to!
-	
-	TODO: This HTML code with divs changed to spans as display:inline-block.
-	[Shows like this is a row]
-	Woo it arranges like <span> used to!
+	<span>A</span><span>B</span><span>C</span>  
+  
+	[span behaving opposite to traditional]
 
-  CSS can take over.  It sets the meaning of the tags!
+... and div can behave like span:
+
+	<style>
+	div { display:inline; }
+	</style>
+
+	<div>A</div><div>B</div><div>C</div>
+
+	[div behaving opposite to traditional]
+
+CSS takes over, setting the meaning of the tags!
 
 If you're a software developer and didn't know this, then this blog is 
 particularly for you!
@@ -70,25 +87,41 @@ Secondly, you can put your CSS in THREE PLACES:-
 	- SEPARATELY at the top of your HTML, in a <style>...</style> tag.
 	- SEPARATELY in another file, with extension ".css".
 
-MIXED into your HTML
+MIXED into your HTML:
   
-	TODO: Code for red paragraph.
+	<p style="background:red;">Red Paragraph</p>
 	
-	[Pic of red paragraph]
+	[Red paragraph 1]
 	
-SEPARATELY at the top of your HTML
+SEPARATELY at the top of your HTML:
 
-	TODO: Code for red paragraph in separate <style> with p {}.
-	
-	[Pic of red paragraph]
+	<style>
+	p { background:red; }
+	</style>
 
-SEPARATELY in another file
+	<p>Red Paragraph</p>
+	
+	[Red paragraph 2]
 
-	TODO: Code for red paragraph in separate file.
+SEPARATELY in another file:
+
+	<!DOCTYPE html>
+	<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="red-paragraph.css">
+	</head>
+	<body>
+
+	<p>Red Paragraph</p>
+
+	</body>
+	</html>
+
+... and the code for red-paragraph.css is:
+
+	p { background:red; }
 	
-	TODO: Code for HTML file including that file.
-	
-	[Pic of red paragraph]
+	[Red paragraph 3]
 
 If you put CSS separately, it becomes UNLINKED from the HTML!
 
@@ -125,7 +158,7 @@ The easiest bit of CSS is setting the APPEARANCE of stuff.
 	- background colours.
 	- fonts.
 
-	[Show some RESULT IMAGES and style=]
+	[Show some RESULT IMAGES and style]
 
 
 
