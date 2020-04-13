@@ -40,8 +40,10 @@ type DocTree3 =
 
 let (|SquareBracketedLine|_|) treeList2 =
     match treeList2 with
+
         | DT2Content(line)::tail ->
             if line |> LooksLikeSquareBracketed then Some(line,tail) else None
+
         | _ -> None
 
 
@@ -51,10 +53,13 @@ let (|SquareBracketedLine|_|) treeList2 =
 
 let TitleWithUnderline pred treeList2 =
     match treeList2 with
+
         | DT2Content(title)::DT2Content(underline)::DT2EmptyLine::tail ->
             if pred underline then Some(title,tail) else None
+    
         | DT2Content(title)::DT2Content(underline)::tail ->
             if pred underline then Some(title,tail) else None
+
         | _ -> None
 
 let (|Title1WithUnderline|_|) = TitleWithUnderline IsHeading1Underline
@@ -95,27 +100,29 @@ let (|Paragraph|_|) treeList2 =
 //  Translation
 // ----------------------------------------------------------------------------------------------
 
-let rec ConvertedMainlyToDocTree3 treeList2 =
+type Level = Outer | Nested
 
-    let translated = ConvertedMainlyToDocTree3
+let rec ConvertedMainlyToDocTree3 nestLevel treeList2 =
 
-    match treeList2 with
+    let translated = ConvertedMainlyToDocTree3 Nested
+
+    match treeList2, nestLevel with
 
         //
         // Upgraded interpretations:
         //
 
-        | SquareBracketedLine (line,tail) -> 
+        | SquareBracketedLine (line,tail), _ -> 
             let trimmedDirective = line.Trim()
             DT3SubstitutionDirective(trimmedDirective)::(translated tail)
 
-        | Title1WithUnderline(title,tail) ->
+        | Title1WithUnderline(title,tail), Outer ->
             DT3Heading(Heading1, title)::(translated tail)
 
-        | Title2WithUnderline(title,tail) ->
+        | Title2WithUnderline(title,tail), Outer ->
             DT3Heading(Heading2, title)::(translated tail)
 
-        | Paragraph(content,tail) ->
+        | Paragraph(content,tail), _ ->
             DT3Paragraph(content)::(translated tail)
 
         // Reminder:  Single line titles done by caller!
@@ -124,13 +131,13 @@ let rec ConvertedMainlyToDocTree3 treeList2 =
         // Fallback cases (1:1 translation with DT2):
         //
         
-        | DT2EmptyLine::tail         ->  translated tail
-        | DT2Content(str)::tail      ->  DT3Paragraph(str)::(translated tail)
-        | DT2Indent(lst)::tail       ->  DT3Indent(translated lst)::(translated tail)
-        | DT2Preformatted(x)::tail   ->  DT3Preformatted(x)::(translated tail)
-        | DT2Bullet(lst)::tail       ->  DT3Bullet(translated lst)::(translated tail)
-        | DT2PageBreak::tail         ->  DT3PageBreak::(translated tail)
-        | [] -> []
+        | DT2EmptyLine::tail, _         ->  translated tail
+        | DT2Content(str)::tail, _      ->  DT3Paragraph(str)::(translated tail)
+        | DT2Indent(lst)::tail, _       ->  DT3Indent(translated lst)::(translated tail)
+        | DT2Preformatted(x)::tail, _   ->  DT3Preformatted(x)::(translated tail)
+        | DT2Bullet(lst)::tail, _       ->  DT3Bullet(translated lst)::(translated tail)
+        | DT2PageBreak::tail, _         ->  DT3PageBreak::(translated tail)
+        | [], _ -> []
 
 
 
@@ -153,6 +160,6 @@ let rec WithSingleLineTitlesRatherThanParagraphs treeList3 =
 let DocTree2ToDocTree3 treeList2 =
 
     treeList2 
-        |> ConvertedMainlyToDocTree3
+        |> ConvertedMainlyToDocTree3 Outer
         |> WithSingleLineTitlesRatherThanParagraphs
 

@@ -131,7 +131,7 @@ let ``Not a Heading 1 when indented`` () =
         "    Introduction"
         "    ============"
     |] 
-        |> Is [ DT3Paragraph "Introduction" ; DT3Paragraph "============" ]
+        |> Is [ DT3Indent([DT3Paragraph "Introduction ============"]) ]
 
 [<Fact>]
 let ``Not a Heading 2 when indented`` () = 
@@ -139,7 +139,7 @@ let ``Not a Heading 2 when indented`` () =
         "    Examples"
         "    --------"
     |] 
-        |> Is [ DT3Paragraph "Examples" ; DT3Paragraph "--------" ]
+        |> Is [ DT3Indent([DT3Paragraph "Examples --------"]) ]
 
 // ----------------------------------------------------------------------------------------------
 //  Single line title
