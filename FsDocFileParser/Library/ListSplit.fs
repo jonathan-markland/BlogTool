@@ -2,13 +2,23 @@
 
 
 
+/// Efficiently identifies a sub-section of a list.
 [<Struct>]
-type ListSlice<'a> = { Start: 'a list ; Count: int }
+type ListSlice<'a> =
+    { 
+        /// A start position in an overall list.
+        Start: 'a list
+        
+        /// Count of the number of significant items 
+        /// from the Start position.
+        Count: int 
+    }
 
 
 
 /// Splits the input list where the isSeparator predicate returns true.
-/// Returns a list of the sub-lists.  The separators are removed in the result.
+/// Returns a reversed list of the sub-lists as ListSlice records.
+/// The separators are removed in the result.
 let ListSplitToSlices isSeparator theList =
 
     let counterReset = 0
@@ -35,6 +45,8 @@ let ListSplitToSlices isSeparator theList =
 
 
 
+/// Splits the input list where the isSeparator predicate returns true.
+/// Returns a reversed list of the sub-lists.  The separators are removed in the result.
 let ListSplitReverse isSeparator theList =
 
     theList 
@@ -43,6 +55,8 @@ let ListSplitReverse isSeparator theList =
 
 
 
+/// Splits the input list where the isSeparator predicate returns true.
+/// Returns a list of the sub-lists.  The separators are removed in the result.
 let ListSplit isSeparator theList =
 
     theList |> ListSplitReverse isSeparator |> List.rev

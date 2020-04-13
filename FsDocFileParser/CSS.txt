@@ -6,6 +6,7 @@ their CSS knowledge recently.  Oh, with a slant that you'll be making APPS.
 
 Other people might find this interesting anyway.
 
+	[Image of second item descending out of container]
 
 
 Background
@@ -505,9 +506,9 @@ The child items CAN be of differing sizes.
   LOADS MORE red blue and green child items.
   
 There are many properties associated with "display:flex" that support arrangement
-of items, so be sure to check out this resource:
+of items, so be sure to check out this resource:-
 
-	- https://css-tricks.com/snippets/css/a-guide-to-flexbox/ .
+	https://css-tricks.com/snippets/css/a-guide-to-flexbox/
 
 SPLIT UP THE SCREEN LIKE A DESKTOP APP
 
@@ -617,7 +618,7 @@ Hide the side panel tag:
 
 GRID EXTERNAL REFERENCE
 
-See this reference for all about CSS Grids:
+See this reference for all about CSS Grids:-
 
 	https://css-tricks.com/snippets/css/complete-guide-grid/
 
