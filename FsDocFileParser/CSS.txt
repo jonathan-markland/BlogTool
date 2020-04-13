@@ -31,13 +31,21 @@ HTML said a lot about WHAT stuff should be on the screen, but
 also implied a lot about APPEARENCE and POSITIONING of that stuff too!
 
 This still shows up today in the DEFAULT CHARACTERISTICS of some
-HTML tags:
+HTML tags.
+
+Example:
 
 	<span>A</span><span>B</span><span>C</span>
 	
-	[Three spans in a row]
+Image:	
 	
+	[Three spans in a row]
+
+Example:
+
 	<div>A</div><div>B</div><div>C</div>
+
+Image:
 	
 	[Three divs in a row]
 
@@ -90,6 +98,8 @@ Secondly, you can put your CSS in THREE PLACES:-
 MIXED into your HTML:
   
 	<p style="background:red;">Red Paragraph</p>
+
+Image:
 	
 	[Red paragraph 1]
 	
@@ -100,6 +110,8 @@ SEPARATELY at the top of your HTML:
 	</style>
 
 	<p>Red Paragraph</p>
+	
+Image:
 	
 	[Red paragraph 2]
 
@@ -120,6 +132,8 @@ SEPARATELY in another file:
 ... and the code for red-paragraph.css is:
 
 	p { background:red; }
+	
+Image:
 	
 	[Red paragraph 3]
 
@@ -157,8 +171,14 @@ The easiest bit of CSS is setting the APPEARANCE of stuff.
 	- colour.
 	- background colours.
 	- fonts.
+	
+For example:	
+	
+	<span style="color:yellow; background-color:blue; font-size:30pt;">This is styled text.</span>
 
-	[Show some RESULT IMAGES and style]
+Image:
+	
+	[Basic colour and font style example]
 
 
 
@@ -227,29 +247,33 @@ Probably the most robust software-developery way of tying separately-specified C
 styles to tags is when you realise you can assign CLASS names to HTML TAGS:
 You make up the class names.
 
-	<div class="budgie">JARVIS</div>
-	<div class="budgie">VINNY</div>
+	<div class="parrot">JARVIS</div>
+	<div class="parrot">VINNY</div>
 
 Now define the STYLE OF THAT CLASS and notice the DOT which means "class name follows":
 
-	.budgie {
+	.parrot {
 		width:  10em;
 		height: 5em;
 	}
 
-Example:
+Full example:
 
 	<style>
 
-	.budgie {
+	.parrot {
 		font-size: 30pt;
 	}
 
 	</style>
 
 	<div>This is just ordinary text.</div>
-	<div class="budgie">JARVIS</div>
-	<div class="budgie">VINNY</div>
+	<div class="parrot">JARVIS</div>
+	<div class="parrot">VINNY</div>
+	
+Image:
+	
+	[Css tie by class]
 
 CSS Class MIX-INS
 
@@ -258,19 +282,19 @@ up off the top of your head.
 
 So, you can associate MANY CLASS NAMES and MIX IN off the top of your head:
 
-	<div class="budgie white-face sky-blue">VINNY</div>
-	<div class="budgie yellow-face dark-green">JARVIS</div>
+	<div class="parrot white-face sky-blue">VINNY</div>
+	<div class="parrot yellow-face dark-green">JARVIS</div>
 
 Example:
 
 	<style>
 
-	.budgie {
+	.parrot {
 		display: flex;
 		align-items: center;
 		justify-content: center;		
-		width: 10em;
-		height: 5em;
+		width: 5em;
+		height: 2.5em;
 		font-size: 30pt;
 	}
 
@@ -292,8 +316,12 @@ Example:
 
 	</style>
 
-	<div class="budgie white-face sky-blue">VINNY</div>
-	<div class="budgie yellow-face dark-green">JARVIS</div>
+	<div class="parrot white-face sky-blue">VINNY</div>
+	<div class="parrot yellow-face dark-green">JARVIS</div>
+	
+Image:
+	
+	[Css class mix ins]
 	
 Try erasing the class names from the class="..." parts of the divs.	
 
@@ -313,11 +341,11 @@ Example:
 	<style>
 	
 	div {
-		background-color: cyan;
+		background-color: yellow;
 	}
 	
 	p {
-		background-color: yellow;
+		background-color: orange;
 	}
 
 	span {
@@ -331,6 +359,10 @@ Example:
 	<span>This is what a SPAN looks like now.</span>
 	<p>This is what a P paragraph looks like now.</p>
 	<div>This is another DIV <span>that has a SPAN inside</span> of it in the middle.</div>
+	
+Image:
+	
+	[CSS tie by HTML TAG]
 
 CSS tie by USER DEFINED TAG NAMES
 
@@ -344,10 +376,12 @@ Example:
 	
 	charlie {
 		background-color: #5AA9C2;
+        color: yellow;
 	}
 	
 	oscar {
 		background-color: #029B12;
+        color: white;
 	}
 
 	</style>
@@ -355,6 +389,9 @@ Example:
 	<charlie>This is what a &lt;charlie&gt; tag looks like.</charlie>
 	<oscar>This is what an &lt;oscar&gt; tag looks like.</oscar>
 
+Image:
+	
+	[CSS tie by USER DEFINED TAG NAMES]
 
 
 
@@ -405,6 +442,10 @@ Example:
 
 	Some Text with a red box: <redbox></redbox>, and some more text.
 
+Image:
+	
+	[Red box in text]
+
 Example:
 
 	<style>
@@ -424,6 +465,10 @@ Example:
 
 	Some text with boxes: <redbox></redbox><bluebox></bluebox><redbox></redbox><bluebox></bluebox><redbox></redbox>, and some more text.
 
+Image:
+	
+	[Red boxes in text]
+
 MAKE A HIGHLIGHTER PEN
 
 This is sort of what <span> did in the older browser.
@@ -442,6 +487,10 @@ Example:
 	With the next revision of this document, we really need to sort <highlight>this 
 	thing</highlight> and <highlight>this other thing</highlight> out, before we
 	release it!
+
+Image:
+	
+	[Highlighter pen]
 
 INLINE vs INLINE-BLOCK
 
@@ -467,10 +516,14 @@ Example:
 	}
 	</style>
 
-	Well, this paragraph looks <next>misleading</next> because it looks like
-	it will be all one thing, but my user-defined 'next' tag spoils everything
+	Well, this paragraph is <next>misleading</next> because the HTML looks like
+	it will be all one paragraph.  My user-defined 'next' tag spoils everything
 	because it starts a new paragraph for its content, and then afterwards this
 	remaining text behaves like a new paragraph.
+
+Image:
+	
+	[Force start new paragraph]
 
 Notice also how the "display:block" thing occupied ALL of the horizontal space,
 which is why I set a background colour.
@@ -526,6 +579,10 @@ Example:
 	</style>
 	
 	<outerthing><blue></blue><red></red><green></green></outerthing>
+
+Image:
+	
+	[Arrange children centrally]
 
 Notice that the outer container sets the positions of the child items
 irrespective of the "display:" property of the child item.
@@ -631,6 +688,10 @@ Example:
 		<statusbar>STATUS BAR</statusbar>
 	</outerthing>
 
+Image:
+	
+	[Desktop app arrangement]
+
 TO HIDE THE SIDE PANEL
 
 Could be done in a variety of ways, as follows.
@@ -648,6 +709,10 @@ Hide the side panel tag:
 		sidepanel {
 			display: none;
 			... etc
+
+Image:
+	
+	[Desktop app side panel hidden]
 
 GRID EXTERNAL REFERENCE
 
