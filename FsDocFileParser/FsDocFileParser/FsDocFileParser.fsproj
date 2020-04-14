@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
@@ -10,8 +10,8 @@
     <Compile Include="DocTree1.fs" />
     <Compile Include="DocTree2.fs" />
     <Compile Include="DocTree3.fs" />
+    <Compile Include="PreformattedSection.fs" />
     <Compile Include="Debug.fs" />
-    <Compile Include="Program.fs" />
   </ItemGroup>
 
 </Project>

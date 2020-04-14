@@ -12,6 +12,8 @@ open DocTree3
 open ListSplit
 open StringClassifiers
 open FileSystemEffects
+open PreformattedSection // HACK
+open HtmlEscaper
 
 
 
@@ -30,20 +32,6 @@ let WithErrorPrefixIfErrorIn page leafName =
         "ERROR IN FILE - " + leafName
     else
         leafName
-
-
-
-let EscapedForHTML (rawString:string) = 
-
-    let replacing (searchChar:string) (replaceStr:string) (str:string) =
-        // Ensure we create no garbage when there is nothing to replace:
-        if str.Contains(searchChar) then str.Replace(searchChar, replaceStr) else str
-
-    rawString 
-        |> replacing "&" "&amp;" 
-        |> replacing "<" "&lt;" 
-        |> replacing ">" "&gt;" 
-        |> replacing "\"" "&quot;"
 
 
 
@@ -78,10 +66,12 @@ let ConsideredForItalics (content:string) =
 
 
 
+let ImageSourceRegex = new System.Text.RegularExpressions.Regex("<img src=\"([a-zA-Z0-9\- \.]*)\"></img>")
+
+
+
 let ListOfImageFilesWithin (page:string) =
-    let regex = new System.Text.RegularExpressions.Regex("<img src=\"([a-zA-Z0-9\- \.]*)\"></img>")
-    let results = regex.Matches(page) //:> System.Text.RegularExpressions.MatchCollection
-    results 
+    ImageSourceRegex.Matches(page)
         |> Seq.map (fun result -> result.Groups.[1].Value) 
         |> Seq.toList
 
@@ -130,6 +120,13 @@ let DocTree3ToTraditionalHTML substitutionProvider treeList3 =
                 |> Option.defaultValue (InjectedErrorString "Unrecognised directive" directive)
 
         let rec preformattedToHTML lst = 
+
+            /// vvv HACK
+
+            let asString = lst |> PreformattedSectionToDocumentString
+            let lst2 = asString |> DocumentStringToPreformattedSection
+
+            /// ^^^ HACK
 
             let mutable str = ""
             lst |> List.iter (fun (PreformattedString(s)) -> 
