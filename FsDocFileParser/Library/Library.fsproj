@@ -6,10 +6,10 @@
 
   <ItemGroup>
     <Compile Include="HtmlEscaper.fs" />
-    <Compile Include="CSSTokens.fs" />
-    <Compile Include="CSSLexer.fs" />
     <Compile Include="DocumentColourizer.fs" />
+    <Compile Include="ColourizationTokens.fs" />
     <Compile Include="CSSColourizer.fs" />
+    <Compile Include="CSSLexer.fs" />
     <Compile Include="FileSystemEffects.fs" />
     <Compile Include="ListSplit.fs" />
   </ItemGroup>

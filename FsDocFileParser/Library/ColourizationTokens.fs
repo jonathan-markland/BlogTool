@@ -1,6 +1,8 @@
-﻿module CSSTokens
+﻿module ColourizationTokens
 
-type CSSToken =
+open DocSlice
+
+type ColourToken =
 
     /// The selector name part
     | SelectorNamePart
@@ -28,3 +30,10 @@ type CSSToken =
 
     /// Ordinary text
     | Text
+
+
+
+let DocumentFromTokens colourTokens =
+    match colourTokens with
+        | (_, DocSlice(_,_,document))::_ -> Some(document)
+        | [] -> None

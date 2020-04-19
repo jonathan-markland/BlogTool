@@ -1,7 +1,6 @@
 ﻿module CSSColourizer
 
-open CSSTokens
-open CSSLexer
+open ColourizationTokens
 open DocumentColourizer
 open HtmlEscaper
 
@@ -11,15 +10,15 @@ let ColouredHtmlSpan colourIndicator str =
 
     let cssColour =
         match colourIndicator with
-            | CSSToken.SelectorNamePart -> Some("red")
-            | CSSToken.DefinitionPart   -> Some("green")
-            | CSSToken.PropertyNamePart -> Some("purple")
-            | CSSToken.OpenBrace        -> Some("blue")
-            | CSSToken.CloseBrace       -> Some("blue")
-            | CSSToken.Semicolon        -> Some("blue")
-            | CSSToken.Colon            -> Some("blue")
-            | CSSToken.HtmlTag          -> Some("cyan")
-            | CSSToken.Text             -> None
+            | ColourToken.SelectorNamePart -> Some("red")
+            | ColourToken.DefinitionPart   -> Some("green")
+            | ColourToken.PropertyNamePart -> Some("purple")
+            | ColourToken.OpenBrace        -> Some("blue")
+            | ColourToken.CloseBrace       -> Some("blue")
+            | ColourToken.Semicolon        -> Some("blue")
+            | ColourToken.Colon            -> Some("blue")
+            | ColourToken.HtmlTag          -> Some("cyan")
+            | ColourToken.Text             -> None
 
     let str = str |> EscapedForHTML
 
@@ -33,15 +32,15 @@ let UserDefinedHtmlTagsForCss colourIndicator str =
 
     let tagName = 
         match colourIndicator with
-            | CSSToken.SelectorNamePart -> Some("sel")
-            | CSSToken.DefinitionPart   -> Some("def")
-            | CSSToken.PropertyNamePart -> Some("prop")
-            | CSSToken.OpenBrace        -> Some("open-brace")
-            | CSSToken.CloseBrace       -> Some("close-brace")
-            | CSSToken.Semicolon        -> Some("semi")
-            | CSSToken.Colon            -> Some("colon")
-            | CSSToken.HtmlTag          -> Some("tag")
-            | CSSToken.Text             -> None
+            | ColourToken.SelectorNamePart -> Some("sel")
+            | ColourToken.DefinitionPart   -> Some("def")
+            | ColourToken.PropertyNamePart -> Some("prop")
+            | ColourToken.OpenBrace        -> Some("open-brace")
+            | ColourToken.CloseBrace       -> Some("close-brace")
+            | ColourToken.Semicolon        -> Some("semi")
+            | ColourToken.Colon            -> Some("colon")
+            | ColourToken.HtmlTag          -> Some("tag")
+            | ColourToken.Text             -> None
 
     let str = str |> EscapedForHTML
 
@@ -53,19 +52,19 @@ let UserDefinedHtmlTagsForCss colourIndicator str =
 
 /// Apply CSS colourisation to a document contained within a string.
 /// The colourisation will use span tags and style color.
-let CssColouredUpWithHtmlSpans document = 
-
-    let cssTokens = document |> CSSTokensFromString
-    document |> ColourMarkedUpDocument cssTokens ColouredHtmlSpan
+let CssColouredUpWithHtmlSpans cssTokens = 
+    match cssTokens |> DocumentFromTokens with
+        | None -> ""
+        | Some(document) -> document |> ColourMarkedUpDocument cssTokens ColouredHtmlSpan
 
 
 
 /// Apply CSS colourisation to a document contained within a string.
 /// The colourisation will use span tags and style color.
-let CssColouredUpWithUserDefinedTags document = 
-
-    let cssTokens = document |> CSSTokensFromString
-    document |> ColourMarkedUpDocument cssTokens UserDefinedHtmlTagsForCss
+let CssColouredUpWithUserDefinedTags cssTokens = 
+    match cssTokens |> DocumentFromTokens with
+        | None -> ""
+        | Some(document) -> document |> ColourMarkedUpDocument cssTokens UserDefinedHtmlTagsForCss
 
 
 
