@@ -23,24 +23,24 @@ let ColouredUsingTags colourIndicator str =
 
     let tagName = 
         match colourIndicator with
-            | White   -> Some("w")
-            | Black   -> None
-            | Grey1   -> Some("g1")
-            | Grey2   -> Some("g2")
-            | Red1    -> Some("r1")
-            | Red2    -> Some("r2")
-            | Orange1 -> Some("o1")
-            | Orange2 -> Some("o2")
-            | Yellow1 -> Some("y1")
-            | Yellow2 -> Some("y2")
-            | Green1  -> Some("g1")
-            | Green2  -> Some("g2")
-            | Cyan1   -> Some("c1")
-            | Cyan2   -> Some("c2")
-            | Blue1   -> Some("b1")
-            | Blue2   -> Some("b2")
-            | Pink1   -> Some("p1")
-            | Pink2   -> Some("p2")
+            | White      -> Some("w")
+            | Black      -> None
+            | Grey       -> Some("g1")
+            | DarkGrey   -> Some("g2")
+            | Red        -> Some("r1")
+            | DarkRed    -> Some("r2")
+            | Orange     -> Some("o1")
+            | DarkOrange -> Some("o2")
+            | Yellow     -> Some("y1")
+            | DarkYellow -> Some("y2")
+            | Green      -> Some("g1")
+            | DarkGreen  -> Some("g2")
+            | Cyan       -> Some("c1")
+            | DarkCyan   -> Some("c2")
+            | Blue       -> Some("b1")
+            | DarkBlue   -> Some("b2")
+            | Pink       -> Some("p1")
+            | DarkPink   -> Some("p2")
 
     let str = str |> EscapedForHTML
 

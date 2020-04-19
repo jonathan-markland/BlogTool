@@ -7,11 +7,8 @@ let private IsCSSWhitespaceChar ch = (ch = ' ') || (ch = '\r') || (ch = '\n')
 let private IsCSSSelectorChar ch   = (System.Char.IsLetter ch) || (ch = '.') || ch = '#' || ch = '-'   // approximation
 let private IsCSSPropertyChar ch   = (System.Char.IsLetter ch) || ch = '-'   // approximation
 let private IsCSSDefinitionChar ch = ch <> '\x00' && ch <> ';' && ch <> '{' && ch <> '}'   && ch <> '<' && ch <> '>'
-
 let private IsHTMLNameChar ch      = (System.Char.IsLetter ch) || ch = '-'
-
-let private Whitespace = 
-    ZeroOrMoreCharsWhere IsCSSWhitespaceChar
+let private Whitespace             = ZeroOrMoreCharsWhere IsCSSWhitespaceChar
 
 let private (|Selector|_|) pos =
     let name  = pos |> ZeroOrMoreCharsWhere IsCSSSelectorChar
@@ -104,22 +101,22 @@ let private ParseNextToken listSoFar docPosition =
 
     match start with
         | Selector(name, brace) ->
-            Some( (Red1, brace)::(Red2, name)::listSoFar, brace |> End )
+            Some( (Green, brace)::(DarkRed, name)::listSoFar, brace |> End )
 
         | Property(name, colon, body, semi) ->
-            Some( (Orange1, semi)::(Orange2, body)::(Green1, colon)::(Pink1, name)::listSoFar, semi |> End )
+            Some( (Orange, semi)::(DarkOrange, body)::(Green, colon)::(Pink, name)::listSoFar, semi |> End )
 
         | CloseCurly(close) ->
-            Some( (Green1, close)::listSoFar, close |> End )
+            Some( (Green, close)::listSoFar, close |> End )
 
         | TagStart(tagIntro) ->
-            Some( (Blue1, tagIntro)::listSoFar, tagIntro |> End )
+            Some( (Blue, tagIntro)::listSoFar, tagIntro |> End )
 
         | CloseTag(tagEnd) ->
-            Some( (Blue1, tagEnd)::listSoFar, tagEnd |> End )
+            Some( (Blue, tagEnd)::listSoFar, tagEnd |> End )
 
         | OrdinaryText(txt) ->
-            Some( (Grey2, txt)::listSoFar, txt |> End )
+            Some( (Black, txt)::listSoFar, txt |> End )
 
         | _ -> None
 
