@@ -3,6 +3,12 @@
 open DocSlice
 
 
+let DocumentFromTokens colourTokens =
+    match colourTokens with
+        | (_, DocSlice(_,_,document))::_ -> Some(document)
+        | [] -> None
+
+
 /// Given a document (in a string) and its tokens, return a version
 /// of the document with colourisation markup applied.
 /// The tokens is a list of (token, string-slice) tuples where the 

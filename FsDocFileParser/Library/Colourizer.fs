@@ -1,6 +1,6 @@
 ﻿module Colourizer
 
-open ColourizationTokens
+open StandardColourPalette
 open DocumentColourizer
 open HtmlEscaper
 

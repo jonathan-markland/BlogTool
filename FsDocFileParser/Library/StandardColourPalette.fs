@@ -1,6 +1,4 @@
-﻿module ColourizationTokens
-
-open DocSlice
+﻿module StandardColourPalette
 
 /// A colour type which is mapped to suggested colours by 'StandardColourFor', which you
 /// should use for primary design against a white background.  The intention is these
@@ -87,10 +85,3 @@ let StandardColourFor colourToken =
     | DarkBlue   -> 0x1093F5  // Material BLUE
     | Pink       -> 0xEB1460  // Material PINK
     | DarkPink   -> 0x9C1AB1  // Material PURPLE
-
-
-
-let DocumentFromTokens colourTokens =
-    match colourTokens with
-        | (_, DocSlice(_,_,document))::_ -> Some(document)
-        | [] -> None

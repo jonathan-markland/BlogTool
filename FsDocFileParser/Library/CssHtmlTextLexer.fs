@@ -1,7 +1,7 @@
 ﻿module CssHtmlTextLexer
 
 open DocSlice
-open ColourizationTokens
+open StandardColourPalette
 
 let private IsCSSWhitespaceChar ch = (ch = ' ') || (ch = '\r') || (ch = '\n')
 let private IsCSSSelectorChar ch   = (System.Char.IsLetter ch) || (ch = '.') || ch = '#' || ch = '-'   // approximation

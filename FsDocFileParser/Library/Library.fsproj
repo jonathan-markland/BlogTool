@@ -5,9 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="StandardColourPalette.fs" />
     <Compile Include="HtmlEscaper.fs" />
     <Compile Include="DocumentColourizer.fs" />
-    <Compile Include="ColourizationTokens.fs" />
     <Compile Include="Colourizer.fs" />
     <Compile Include="CssHtmlTextLexer.fs" />
     <Compile Include="FileSystemEffects.fs" />
