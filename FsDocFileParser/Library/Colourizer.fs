@@ -1,4 +1,4 @@
-﻿module CSSColourizer
+﻿module Colourizer
 
 open ColourizationTokens
 open DocumentColourizer
@@ -6,7 +6,7 @@ open HtmlEscaper
 
 
 
-let ColouredHtmlSpan colourIndicator str =
+let ColouredUsingHtmlSpan colourIndicator str =
 
     let cssColour =
         match colourIndicator with
@@ -28,7 +28,7 @@ let ColouredHtmlSpan colourIndicator str =
 
 
 
-let UserDefinedHtmlTagsForCss colourIndicator str =
+let ColouredUsingTags colourIndicator str =
 
     let tagName = 
         match colourIndicator with
@@ -50,21 +50,21 @@ let UserDefinedHtmlTagsForCss colourIndicator str =
 
 
 
-/// Apply CSS colourisation to a document contained within a string.
+/// Apply colourisation to a document contained within a string.
 /// The colourisation will use span tags and style color.
-let CssColouredUpWithHtmlSpans cssTokens = 
-    match cssTokens |> DocumentFromTokens with
+let ColouredUpWithHtmlSpans colouredTokens = 
+    match colouredTokens |> DocumentFromTokens with
         | None -> ""
-        | Some(document) -> document |> ColourMarkedUpDocument cssTokens ColouredHtmlSpan
+        | Some(document) -> document |> ColourMarkedUpDocument colouredTokens ColouredUsingHtmlSpan
 
 
 
-/// Apply CSS colourisation to a document contained within a string.
+/// Apply colourisation to a document contained within a string.
 /// The colourisation will use span tags and style color.
-let CssColouredUpWithUserDefinedTags cssTokens = 
-    match cssTokens |> DocumentFromTokens with
+let ColouredUpWithUserDefinedTags colouredTokens = 
+    match colouredTokens |> DocumentFromTokens with
         | None -> ""
-        | Some(document) -> document |> ColourMarkedUpDocument cssTokens UserDefinedHtmlTagsForCss
+        | Some(document) -> document |> ColourMarkedUpDocument colouredTokens ColouredUsingTags
 
 
 

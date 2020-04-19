@@ -8,8 +8,8 @@
     <Compile Include="HtmlEscaper.fs" />
     <Compile Include="DocumentColourizer.fs" />
     <Compile Include="ColourizationTokens.fs" />
-    <Compile Include="CSSColourizer.fs" />
-    <Compile Include="CSSLexer.fs" />
+    <Compile Include="Colourizer.fs" />
+    <Compile Include="CssHtmlTextLexer.fs" />
     <Compile Include="FileSystemEffects.fs" />
     <Compile Include="ListSplit.fs" />
   </ItemGroup>

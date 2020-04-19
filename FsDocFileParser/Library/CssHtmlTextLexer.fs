@@ -1,19 +1,19 @@
-﻿module CSSLexer
+﻿module CssHtmlTextLexer
 
 open DocSlice
 open ColourizationTokens
 
-let IsCSSWhitespaceChar ch = (ch = ' ') || (ch = '\r') || (ch = '\n')
-let IsCSSSelectorChar ch   = (System.Char.IsLetter ch) || (ch = '.') || ch = '#' || ch = '-'   // approximation
-let IsCSSPropertyChar ch   = (System.Char.IsLetter ch) || ch = '-'   // approximation
-let IsCSSDefinitionChar ch = ch <> '\x00' && ch <> ';' && ch <> '{' && ch <> '}'   && ch <> '<' && ch <> '>'
+let private IsCSSWhitespaceChar ch = (ch = ' ') || (ch = '\r') || (ch = '\n')
+let private IsCSSSelectorChar ch   = (System.Char.IsLetter ch) || (ch = '.') || ch = '#' || ch = '-'   // approximation
+let private IsCSSPropertyChar ch   = (System.Char.IsLetter ch) || ch = '-'   // approximation
+let private IsCSSDefinitionChar ch = ch <> '\x00' && ch <> ';' && ch <> '{' && ch <> '}'   && ch <> '<' && ch <> '>'
 
-let IsHTMLNameChar ch      = (System.Char.IsLetter ch) || ch = '-'
+let private IsHTMLNameChar ch      = (System.Char.IsLetter ch) || ch = '-'
 
-let Whitespace = 
+let private Whitespace = 
     ZeroOrMoreCharsWhere IsCSSWhitespaceChar
 
-let (|Selector|_|) pos =
+let private (|Selector|_|) pos =
     let name  = pos |> ZeroOrMoreCharsWhere IsCSSSelectorChar
     let optws = name |> End |> Whitespace
     let brace = optws |> End |> CharWhere ((=) '{')
@@ -22,7 +22,7 @@ let (|Selector|_|) pos =
     else
         None
 
-let (|Property|_|) pos =
+let private (|Property|_|) pos =
     let name  = pos |> ZeroOrMoreCharsWhere IsCSSPropertyChar
     let optws = name |> End |> Whitespace
     let colon = optws |> End |> CharWhere ((=) ':')
@@ -33,14 +33,14 @@ let (|Property|_|) pos =
     else
         None
 
-let (|CloseCurly|_|) pos =
+let private (|CloseCurly|_|) pos =
     let slice = pos |> CharWhere ((=) '}')
     if slice |> HasContent then
         Some(slice)
     else
         None
 
-let (|TagStart|_|) pos =
+let private (|TagStart|_|) pos =
     let lessThan = pos |> CharWhere ((=) '<')
     let slash = lessThan |> End |> CharWhere ((=) '/')
     let name  = slash |> End |> ZeroOrMoreCharsWhere IsHTMLNameChar
@@ -49,7 +49,7 @@ let (|TagStart|_|) pos =
     else
         None
 
-let (|CloseTag|_|) pos =
+let private (|CloseTag|_|) pos =
     let slash = pos |> CharWhere ((=) '/')
     let close = slash |> End |> CharWhere ((=) '>')
     if close |> HasContent then  // slash '/' is optional, close '>' is required
@@ -57,7 +57,7 @@ let (|CloseTag|_|) pos =
     else
         None
 
-let LooksLikeSomethingColourable docPosition =
+let private LooksLikeSomethingColourable docPosition =
 
     // ie: NOT OrdinaryText!
 
@@ -69,7 +69,7 @@ let LooksLikeSomethingColourable docPosition =
         | CloseTag _   -> true
         | _ -> false
 
-let (|OrdinaryText|_|) docPosition =
+let private (|OrdinaryText|_|) docPosition =
 
     // TODO: This is an "everything until lexical rule matches" function.
 
@@ -96,7 +96,7 @@ let (|OrdinaryText|_|) docPosition =
 
 
 
-let ParseNextCSSToken listSoFar docPosition =
+let private ParseNextToken listSoFar docPosition =
 
     let start = docPosition
 
@@ -125,12 +125,12 @@ let ParseNextCSSToken listSoFar docPosition =
 
 
             
-let CSSTokensFromString str =
+let CssHtmlTextTokensFromString str =
 
     let startPosition = StartPositionOf str
 
     let rec recurse listSoFar currentPos =
-        match ParseNextCSSToken listSoFar currentPos with
+        match ParseNextToken listSoFar currentPos with
             | Some(newList, newPos) ->
                 recurse newList newPos
             | None ->
