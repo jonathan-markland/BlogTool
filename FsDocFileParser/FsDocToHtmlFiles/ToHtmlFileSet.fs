@@ -14,6 +14,8 @@ open StringClassifiers
 open FileSystemEffects
 open PreformattedSection // HACK
 open HtmlEscaper
+open CssHtmlTextLexer
+open Colourizer
 
 
 
@@ -123,19 +125,23 @@ let DocTree3ToTraditionalHTML substitutionProvider treeList3 =
 
             /// vvv HACK
 
-            let asString = lst |> PreformattedSectionToDocumentString
-            let lst2 = asString |> DocumentStringToPreformattedSection
+            let html = 
+                lst 
+                    |> PreformattedSectionToDocumentString
+                    |> CssHtmlTextTokensFromString
+                    |> ColouredUpWithHtmlSpans
+                    |> UnixLineEndsToListOfStrings
 
             /// ^^^ HACK
 
             let mutable str = ""
-            lst |> List.iter (fun (PreformattedString(s)) -> 
+            html |> List.iter (fun s -> 
 
                 let line =
                     if s |> LooksLikeSquareBracketed then
                         substitutedDirective s
                     else
-                        s |> EscapedForHTML
+                        s
 
                 str <- str + line + "<br/>")
 

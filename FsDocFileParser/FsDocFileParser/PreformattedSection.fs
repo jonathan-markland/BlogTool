@@ -16,12 +16,6 @@ let PreformattedSectionToDocumentString lst =
     builder.ToString()
 
 
+let UnixLineEndsToListOfStrings (str:string) =
 
-let DocumentStringToPreformattedSection (str:string) =
-
-    str.Split('\n')
-        |> Seq.map (fun line -> PreformattedString(line))
-        |> Seq.toList
-
-
-
+    str.Split('\n') |> Array.toList
