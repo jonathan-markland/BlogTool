@@ -8,23 +8,14 @@ open HtmlEscaper
 
 let ColouredUsingHtmlSpan colourIndicator str =
 
-    let cssColour =
-        match colourIndicator with
-            | ColourToken.SelectorNamePart -> Some("red")
-            | ColourToken.DefinitionPart   -> Some("green")
-            | ColourToken.PropertyNamePart -> Some("purple")
-            | ColourToken.OpenBrace        -> Some("blue")
-            | ColourToken.CloseBrace       -> Some("blue")
-            | ColourToken.Semicolon        -> Some("blue")
-            | ColourToken.Colon            -> Some("blue")
-            | ColourToken.HtmlTag          -> Some("cyan")
-            | ColourToken.Text             -> None
-
     let str = str |> EscapedForHTML
 
-    match cssColour with
-        | None -> str
-        | Some(cssColour) -> sprintf "<span style=\"color:%s;\">%s</span>" cssColour str
+    match colourIndicator with
+        | Black ->
+            str
+        | _     -> 
+            let cssColour = sprintf "#%06x" (StandardColourFor colourIndicator)
+            sprintf "<span style=\"color:%s;\">%s</span>" cssColour str
 
 
 
@@ -32,15 +23,24 @@ let ColouredUsingTags colourIndicator str =
 
     let tagName = 
         match colourIndicator with
-            | ColourToken.SelectorNamePart -> Some("sel")
-            | ColourToken.DefinitionPart   -> Some("def")
-            | ColourToken.PropertyNamePart -> Some("prop")
-            | ColourToken.OpenBrace        -> Some("open-brace")
-            | ColourToken.CloseBrace       -> Some("close-brace")
-            | ColourToken.Semicolon        -> Some("semi")
-            | ColourToken.Colon            -> Some("colon")
-            | ColourToken.HtmlTag          -> Some("tag")
-            | ColourToken.Text             -> None
+            | White   -> Some("w")
+            | Black   -> None
+            | Grey1   -> Some("g1")
+            | Grey2   -> Some("g2")
+            | Red1    -> Some("r1")
+            | Red2    -> Some("r2")
+            | Orange1 -> Some("o1")
+            | Orange2 -> Some("o2")
+            | Yellow1 -> Some("y1")
+            | Yellow2 -> Some("y2")
+            | Green1  -> Some("g1")
+            | Green2  -> Some("g2")
+            | Cyan1   -> Some("c1")
+            | Cyan2   -> Some("c2")
+            | Blue1   -> Some("b1")
+            | Blue2   -> Some("b2")
+            | Pink1   -> Some("p1")
+            | Pink2   -> Some("p2")
 
     let str = str |> EscapedForHTML
 

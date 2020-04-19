@@ -104,22 +104,22 @@ let private ParseNextToken listSoFar docPosition =
 
     match start with
         | Selector(name, brace) ->
-            Some( (OpenBrace, brace)::(SelectorNamePart, name)::listSoFar, brace |> End )
+            Some( (Red1, brace)::(Red2, name)::listSoFar, brace |> End )
 
         | Property(name, colon, body, semi) ->
-            Some( (Semicolon, semi)::(DefinitionPart, body)::(Colon, colon)::(PropertyNamePart, name)::listSoFar, semi |> End )
+            Some( (Orange1, semi)::(Orange2, body)::(Green1, colon)::(Pink1, name)::listSoFar, semi |> End )
 
         | CloseCurly(close) ->
-            Some( (CloseBrace, close)::listSoFar, close |> End )
+            Some( (Green1, close)::listSoFar, close |> End )
 
         | TagStart(tagIntro) ->
-            Some( (HtmlTag, tagIntro)::listSoFar, tagIntro |> End )
+            Some( (Blue1, tagIntro)::listSoFar, tagIntro |> End )
 
         | CloseTag(tagEnd) ->
-            Some( (HtmlTag, tagEnd)::listSoFar, tagEnd |> End )
+            Some( (Blue1, tagEnd)::listSoFar, tagEnd |> End )
 
         | OrdinaryText(txt) ->
-            Some( (Text, txt)::listSoFar, txt |> End )
+            Some( (Grey2, txt)::listSoFar, txt |> End )
 
         | _ -> None
 
