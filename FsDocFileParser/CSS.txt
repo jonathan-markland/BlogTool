@@ -915,3 +915,67 @@ its child items.  The box now appears magenta, as expected:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+TOOLBAR EXAMPLE
+
+<!DOCTYPE html>
+<html>
+
+<body>
+
+
+<style>
+container {
+	height: 40px;
+	display: flex;
+    justify-content: space-between;
+    background-color: #EEEEEE;
+    flex-wrap: wrap;
+}
+
+red {
+	width: 40px;
+	height: 40px;
+    background-color: red;
+}
+
+blue {
+	width: 40px;
+	height: 40px;
+    background-color: blue;
+}
+
+</style>
+
+<container>
+	<div style="display:flex; flex-wrap:wrap;">
+		<red></red>
+		<red></red>
+    	<blue></blue>
+		<red></red>
+    	<blue></blue>
+		<red></red>
+    	<blue></blue>
+    	<blue></blue>
+	</div>
+	<div style="display:flex; flex-wrap:wrap;">
+		<red></red>
+    	<blue></blue>
+	</div>
+</container>
+
+
+
+</body>
+
+</html>

@@ -13,7 +13,7 @@ open ListSplit
 open StringClassifiers
 open FileSystemEffects
 open PreformattedSection // HACK
-open HtmlEscaper
+open HtmlGeneration
 open CssHtmlTextLexer
 open Colourizer
 
@@ -24,7 +24,7 @@ let ToolErrorString = "**BlogTool ERROR**"
 
 
 let ErrorInPage (page:string) = 
-    page.Contains("**BlogTool ERROR**") || page.Length = 0
+    page.Contains(ToolErrorString) || page.Length = 0
 
 
 
@@ -71,10 +71,11 @@ let ConsideredForItalics (content:string) =
 let ImageSourceRegex = new System.Text.RegularExpressions.Regex("<img src=\"([a-zA-Z0-9\- \.]*)\"></img>")
 
 
+type ImageFilePath = ImageFilePath of string
 
 let ListOfImageFilesWithin (page:string) =
     ImageSourceRegex.Matches(page)
-        |> Seq.map (fun result -> result.Groups.[1].Value) 
+        |> Seq.map (fun result -> result.Groups.[1].Value |> ImageFilePath) 
         |> Seq.toList
 
 
@@ -86,6 +87,12 @@ let (|HyperlinkParagraph|_|) docTree3 =
             else
                 None
         | _ -> None
+
+
+
+type PageTranslationStatus =
+    | SuccessfulTranslation of htmlFile:HtmlFileBodyString * imageFiles:ImageFilePath list
+    | ErrantTranslation of htmlFile:HtmlFileBodyString
 
 
 
@@ -113,7 +120,7 @@ let DocTree3ToTraditionalHTML substitutionProvider treeList3 =
             if content = escapedContent then
                 "<a href=\"" + content + "\">" + (content |> EscapedForHTML) + "</a>"
             else
-                InjectedErrorString "Invalid characters in file path" content
+                InjectedErrorString "Characters that require escaping for HTML are not valid for use in this file path" content
 
         let substitutedDirective directive =
             directive
@@ -166,8 +173,60 @@ let DocTree3ToTraditionalHTML substitutionProvider treeList3 =
             | [] -> ""
 
 
-    recurse "" treeList3
+    let htmlPageResult = recurse "" treeList3
 
+    let withWarningPrefix s = "<H1>*** THIS FILE HAS ERRORS ***</H1>" + s
+
+    if htmlPageResult |> ErrorInPage then  // TODO: ErrorInPage: Re-parsing our output is not 100% desireable!
+        ErrantTranslation (
+            HtmlFileBodyString (htmlPageResult |> withWarningPrefix))
+    else
+        SuccessfulTranslation(
+            HtmlFileBodyString htmlPageResult, 
+            ListOfImageFilesWithin htmlPageResult)  // TODO: ListOfImageFilesWithin: Re-parsing our output is not 100% desireable!
+
+
+
+
+/// Sanitizer for file system file names.
+let StringSanitizedForFileName (str:string) =
+
+    let s = str 
+                |> Seq.choose (fun ch ->
+                    if ch |> System.Char.IsLetterOrDigit then
+                        Some(ch)
+                    elif ch = ' ' then
+                        Some('-')
+                    else
+                        None)
+                |> Seq.map string
+                |> String.concat ""
+
+    s.Replace("--", "-").ToLower()
+
+
+
+// Try to obtain the first heading.
+let TryFirstHeading treeList3 =
+    match treeList3 with
+        | DT3Heading(_, text)::_ -> Some(text)
+        | _ -> None
+
+
+
+/// Encapsulates the rule for determine the file name of an output file
+/// from the source file and the page content (first heading).
+let PageFileName (pathToTextFile:string) fallbackName (treeList3:DocTree3 list) =
+
+    let inputFileNameWithoutExtension =
+        System.IO.Path.GetFileNameWithoutExtension(pathToTextFile)
+
+    let heading = treeList3 |> TryFirstHeading |> Option.defaultValue fallbackName
+
+    inputFileNameWithoutExtension + " " + heading
+        |> StringSanitizedForFileName
+
+    
 
 
 
@@ -189,49 +248,60 @@ let FileToTraditionalHTMLFileSet (outputPath:string) (pathToTextFile:string) =
     let document = 
         System.IO.File.ReadAllLines(pathToTextFile)
     
-    let treeList = 
+    let splitAtPageBreaks = 
         document 
             |> DocumentToDocTree1
             |> DocTree1ToDocTree2
             |> DocTree2ToDocTree3
+            |> ListSplit ((=) DT3PageBreak)
 
-    let splitAtPageBreaks =
-        treeList |> ListSplit ((=) DT3PageBreak)
-
-    let listOfHtmlPages =
-        splitAtPageBreaks |> List.map (DocTree3ToTraditionalHTML substitutionProvider)
-
-    let copyFileFromInputFolderToOutputFolder leafName =
-        let fileFrom = System.IO.Path.Combine(inputPath, leafName)
-        let fileTo   = System.IO.Path.Combine(outputPath, leafName)
-        { CopySourceFilePath=fileFrom ; CopyTargetFilePath=fileTo }
-
-    let iterateAllGoodPages op pageList =
-        pageList |> List.choose (fun page -> 
-            if page |> ErrorInPage then 
-                None
-            else
-                Some(op page))
+    let translationResults =
+        splitAtPageBreaks
+            |> List.mapi (fun i docTree3 ->
+                let fallbackFileName = sprintf "untitled-file%d" i
+                let pageLeafFileName = (PageFileName pathToTextFile fallbackFileName docTree3) + ".html"
+                pageLeafFileName , (docTree3 |> DocTree3ToTraditionalHTML substitutionProvider)
+            )
 
     let saveJobs =
-        listOfHtmlPages
-            |> List.mapi (fun i page ->
-                let pageLeafName = (sprintf "file%d.html" i) |> WithErrorPrefixIfErrorIn page
-                let saveAs = System.IO.Path.Combine(outputPath, pageLeafName)
-                { SaveFileContent=page ; SaveAsFilePath=saveAs }
+
+        translationResults
+            |> List.map (fun (htmlFileName, translationStatus) -> 
+                match translationStatus with
+                    | SuccessfulTranslation(HtmlFileBodyString (htmlFileContent),_)
+                    | ErrantTranslation(HtmlFileBodyString (htmlFileContent))
+                        ->  let saveAs = System.IO.Path.Combine(outputPath, htmlFileName)
+                            { SaveFileContent=htmlFileContent ; SaveAsFilePath=saveAs }
             )
 
     let copyJobs =
-        listOfHtmlPages
-            |> iterateAllGoodPages (fun page ->
-                ListOfImageFilesWithin page
-                    |> List.map copyFileFromInputFolderToOutputFolder)  // TODO: Overwrite warning?  Solve by verifying names first?
-        |> List.concat
+
+        let copyFileFromInputFolderToOutputFolder (ImageFilePath(leafName)) =
+
+            let fileFrom = System.IO.Path.Combine(inputPath, leafName)
+            let fileTo   = System.IO.Path.Combine(outputPath, leafName)
+            { CopySourceFilePath=fileFrom ; CopyTargetFilePath=fileTo }
+
+        translationResults
+            |> List.collect (fun (_, translationStatus) -> 
+                match translationStatus with
+                    | SuccessfulTranslation(_,imagesList) ->
+                        imagesList |> List.map copyFileFromInputFolderToOutputFolder
+                    | ErrantTranslation _ -> 
+                        []
+            )
+
+     // TODO: let copyJobs =
+     // TODO:     splitAtPageBreaks
+     // TODO:         |> iterateAllGoodPages (fun page ->
+     // TODO:             ListOfImageFilesWithin page
+     // TODO:                 |> List.map copyFileFromInputFolderToOutputFolder)
+     // TODO:     |> List.concat
 
     //
     // SIDE EFFECTS ON FILE SYSTEM
     //
 
-    saveJobs |> SaveFilesNow
+    saveJobs |> SaveFilesNow  // TODO: Overwrite warning?  Solve by verifying names first?
     copyJobs |> CopyFilesNow
 

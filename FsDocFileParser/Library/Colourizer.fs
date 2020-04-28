@@ -2,7 +2,7 @@
 
 open StandardColourPalette
 open DocumentColourizer
-open HtmlEscaper
+open HtmlGeneration
 
 
 
