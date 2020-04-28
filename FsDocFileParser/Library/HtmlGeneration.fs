@@ -28,15 +28,14 @@ let MakeIntoFullHtmlPage pageTitle extraScript (HtmlFileBodyString (pageBodyInne
 
     let preamble1 = """
 <!DOCTYPE html>
-<html style="height:100%; overflow:hidden">
+<html>
 <title>
 """
 
     let preamble2 = """
 </title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="jonathans_w3c_css.css">
-<body style="height:100%; overflow:hidden">
+<body>
 """
 
     let postamble = """

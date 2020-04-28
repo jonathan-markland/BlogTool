@@ -90,13 +90,13 @@ let (|HyperlinkParagraph|_|) docTree3 =
 
 
 
-type PageTranslationStatus =
-    | SuccessfulTranslation of htmlFile:HtmlFileBodyString * imageFiles:ImageFilePath list
-    | ErrantTranslation of htmlFile:HtmlFileBodyString
+type PageTranslationStatus<'htmlString> =
+    | SuccessfulTranslation of htmlFile:'htmlString * imageFiles:ImageFilePath list
+    | ErrantTranslation of htmlFile:'htmlString
 
 
 
-let DocTree3ToTraditionalHTML substitutionProvider treeList3 = 
+let DocTree3ToTraditionalHTML substitutionProvider (pageWrapped:HtmlFileBodyString -> 'htmlString) treeList3 = 
 
     // TODO: This is not absolutely performant with the use of .Net string concatenations.
 
@@ -179,10 +179,10 @@ let DocTree3ToTraditionalHTML substitutionProvider treeList3 =
 
     if htmlPageResult |> ErrorInPage then  // TODO: ErrorInPage: Re-parsing our output is not 100% desireable!
         ErrantTranslation (
-            HtmlFileBodyString (htmlPageResult |> withWarningPrefix))
+            HtmlFileBodyString (htmlPageResult |> withWarningPrefix) |> pageWrapped)
     else
         SuccessfulTranslation(
-            HtmlFileBodyString htmlPageResult, 
+            HtmlFileBodyString (htmlPageResult) |> pageWrapped, 
             ListOfImageFilesWithin htmlPageResult)  // TODO: ListOfImageFilesWithin: Re-parsing our output is not 100% desireable!
 
 
@@ -245,22 +245,21 @@ let FileToTraditionalHTMLFileSet (outputPath:string) (pathToTextFile:string) =
         else
             Some(InjectedErrorString "Cannot find image file" imagePath)
 
-    let document = 
-        System.IO.File.ReadAllLines(pathToTextFile)
     
-    let splitAtPageBreaks = 
-        document 
+    let translationResults =
+
+        pathToTextFile
+            |> System.IO.File.ReadAllLines
             |> DocumentToDocTree1
             |> DocTree1ToDocTree2
             |> DocTree2ToDocTree3
             |> ListSplit ((=) DT3PageBreak)
-
-    let translationResults =
-        splitAtPageBreaks
             |> List.mapi (fun i docTree3 ->
                 let fallbackFileName = sprintf "untitled-file%d" i
                 let pageLeafFileName = (PageFileName pathToTextFile fallbackFileName docTree3) + ".html"
-                pageLeafFileName , (docTree3 |> DocTree3ToTraditionalHTML substitutionProvider)
+                let wrappedAsRegularHtmlPage = MakeIntoFullHtmlPage "Title" ""
+                let translation = docTree3 |> DocTree3ToTraditionalHTML substitutionProvider wrappedAsRegularHtmlPage
+                (pageLeafFileName , translation)
             )
 
     let saveJobs =
@@ -268,8 +267,8 @@ let FileToTraditionalHTMLFileSet (outputPath:string) (pathToTextFile:string) =
         translationResults
             |> List.map (fun (htmlFileName, translationStatus) -> 
                 match translationStatus with
-                    | SuccessfulTranslation(HtmlFileBodyString (htmlFileContent),_)
-                    | ErrantTranslation(HtmlFileBodyString (htmlFileContent))
+                    | SuccessfulTranslation(HtmlFullFile (htmlFileContent),_)
+                    | ErrantTranslation(HtmlFullFile (htmlFileContent))
                         ->  let saveAs = System.IO.Path.Combine(outputPath, htmlFileName)
                             { SaveFileContent=htmlFileContent ; SaveAsFilePath=saveAs }
             )
@@ -290,13 +289,6 @@ let FileToTraditionalHTMLFileSet (outputPath:string) (pathToTextFile:string) =
                     | ErrantTranslation _ -> 
                         []
             )
-
-     // TODO: let copyJobs =
-     // TODO:     splitAtPageBreaks
-     // TODO:         |> iterateAllGoodPages (fun page ->
-     // TODO:             ListOfImageFilesWithin page
-     // TODO:                 |> List.map copyFileFromInputFolderToOutputFolder)
-     // TODO:     |> List.concat
 
     //
     // SIDE EFFECTS ON FILE SYSTEM
